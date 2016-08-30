@@ -1,0 +1,10 @@
+# Compiled source #
+###################
+*.o
+*.a
+ 
+# Specific exes #
+#################
+tools/generate_level2_qa
+tools/test_read_level1_qa
+
