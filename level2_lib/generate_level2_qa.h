@@ -24,6 +24,7 @@ NOTES:
 #include "write_level2_qa.h"
 #include "l2qa_common.h"
 #include "write_metadata.h"
+#include "envi_header.h"
 
 /* Defines */
 #define L2QA_CLEAR 0

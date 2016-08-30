@@ -47,9 +47,11 @@ int generate_level2_qa
     char errmsg[STR_SIZE];     /* error message */
     char l1_qa_file[STR_SIZE]; /* output Level-2 QA filename */
     char l2_qa_file[STR_SIZE]; /* output Level-2 QA filename */
-    char production_date[MAX_DATE_LEN+1]; /* current date/time for production */
     char tmpstr[STR_SIZE];     /* tempoary string for filenames */
-    char *cptr = NULL;         /* character pointer for the '.' in XML name */
+    char envi_file[STR_SIZE];  /* name of the output ENVI header file */
+    char production_date[MAX_DATE_LEN+1]; /* current date/time for production */
+    char *cptr = NULL;         /* character pointer for the '.' in XML name
+                                  and image name */
     int i;                     /* looping variable */
     int nlines;                /* number of lines in the QA band */
     int nsamps;                /* number of samples in the QA band */
@@ -69,6 +71,7 @@ int generate_level2_qa
     Espa_band_meta_t *l2qa_bmeta; /* pointer to the array of bands in the
                                      Level-2 QA metadata */
     Espa_band_meta_t *bmeta;    /* pointer to the array of bands metadata */
+    Envi_header_t envi_hdr;     /* output ENVI header information */
 
     /* Open the Level-1 QA file */
     l1_fp_bqa = open_level1_qa (espa_xml_file, l1_qa_file, &nlines, &nsamps,
@@ -288,6 +291,26 @@ int generate_level2_qa
         return (ERROR);
     }
     strcpy (l2qa_bmeta->production_date, production_date);
+
+    /* Create the ENVI header file this band */
+    if (create_envi_struct (l2qa_bmeta, &xml_metadata.global, &envi_hdr) !=
+        SUCCESS)
+    {
+        sprintf (errmsg, "Creating ENVI header structure.");
+        error_handler (true, FUNC_NAME, errmsg);
+        return (ERROR);
+    }
+
+    /* Write the ENVI header */
+    strcpy (envi_file, l2qa_bmeta->file_name);
+    cptr = strchr (envi_file, '.');
+    strcpy (cptr, ".hdr");
+    if (write_envi_hdr (envi_file, &envi_hdr) != SUCCESS)
+    {
+        sprintf (errmsg, "Writing ENVI header file.");
+        error_handler (true, FUNC_NAME, errmsg);
+        return (ERROR);
+    }
 
     /* Add the Level-2 QA band to the XML file */
     if (append_metadata (1, l2qa_bmeta, espa_xml_file) != SUCCESS)
