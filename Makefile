@@ -5,8 +5,10 @@
 #-----------------------------------------------------------------------------
 .PHONY: all install-headers install-lib install clean
 
-LIBDIRS = level1_lib
-#          level2_lib  (add later)
+LIBDIRS = \
+           common      \
+           level1_lib  \
+           level2_lib
 EXEDIRS = tools
 
 #-----------------------------------------------------------------------------

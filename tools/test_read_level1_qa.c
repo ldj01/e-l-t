@@ -35,7 +35,7 @@ void usage ()
             "to allow for verification of the read.  It also uses the "
             "Level-1 QA interrogation functions to determine cloud, shadow, "
             "etc. and other QA bits for testing those functions.\n\n");
-    printf ("usage: test_read_level1_qa --xml=output_xml_filename\n");
+    printf ("usage: test_read_level1_qa --xml=input_xml_filename\n");
 
     printf ("\nwhere the following parameters are required:\n");
     printf ("    -xml: name of the input XML metadata file which follows "

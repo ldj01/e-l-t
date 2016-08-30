@@ -20,6 +20,8 @@ INC =
 # Define the source code and object files
 SRC1 = test_read_level1_qa.c
 OBJ1 = $(SRC1:.c=.o)
+SRC2 = generate_level2_qa.c
+OBJ2 = $(SRC2:.c=.o)
 
 # Define include paths
 INCDIR  = -I. -I../include -I$(ESPAINC) -I$(XML2INC) 
@@ -33,15 +35,24 @@ LIB1   = -L../lib -l_espa_level1_qa \
     -L$(XML2LIB) -lxml2 \
     $(MATHLIB)
 
+LIB2   = -L../lib -l_espa_level2_qa -l_espa_level1_qa \
+    -L$(ESPALIB) -l_espa_raw_binary -l_espa_common \
+    -L$(XML2LIB) -lxml2 \
+    $(MATHLIB)
+
 # Define C executables
 EXE1 = test_read_level1_qa
-ALL_EXES = $(EXE1)
+EXE2 = generate_level2_qa
+ALL_EXES = $(EXE1) $(EXE2)
 
 #-----------------------------------------------------------------------------
 all: $(ALL_EXES)
 
 $(EXE1): $(OBJ1) $(INC)
 	$(CC) $(NCFLAGS) -o $(EXE1) $(OBJ1) $(LIB1)
+
+$(EXE2): $(OBJ2) $(INC)
+	$(CC) $(NCFLAGS) -o $(EXE2) $(OBJ2) $(LIB2)
 
 #-----------------------------------------------------------------------------
 install: $(ALL_EXES)
