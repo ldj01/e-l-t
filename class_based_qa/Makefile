@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# Makefile for LaSRC code
+# Makefile for Level-2 class-based QA code
 #-----------------------------------------------------------------------------
 .PHONY: all install-headers install-lib install clean
 
@@ -15,13 +15,13 @@ AR    = ar rcsv
 EXTRA = -Wall $(EXTRA_OPTIONS)
 
 # Define the include files
-INC = read_level2_qa.h write_level2_qa.h generate_level2_qa.h
+INC = read_class_based_qa.h write_class_based_qa.h generate_class_based_qa.h
 
 # Define the source code and object files
 SRC = \
-      read_level2_qa.c \
-      write_level2_qa.c \
-      generate_level2_qa.c
+      read_class_based_qa.c \
+      write_class_based_qa.c \
+      generate_class_based_qa.c
 OBJ = $(SRC:.c=.o)
 
 # Define include paths
@@ -35,7 +35,7 @@ NCFLAGS = $(EXTRA) $(INCDIR)
 #LOADLIB = $(EXLIB) $(MATHLIB)
 
 # Define C library/archive
-ARCHIVE = lib_espa_level2_qa.a
+ARCHIVE = lib_espa_class_based_qa.a
 
 #-----------------------------------------------------------------------------
 all: $(ARCHIVE)

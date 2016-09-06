@@ -1,8 +1,8 @@
 /*****************************************************************************
-FILE: generate_level2_qa.c
+FILE: generate_class_based_qa.c
   
-PURPOSE: Contains functions for generating the Level-2 QA band from the input
-Level-1 QA band.
+PURPOSE: Contains functions for generating the class-based QA band from the
+input Level-1 QA band.
 
 PROJECT:  Land Satellites Data System Science Research and Development (LSRD)
 at the USGS EROS
@@ -16,37 +16,37 @@ NOTES:
      http://espa.cr.usgs.gov/schema/espa_internal_metadata_vx_x.xsd.
 *****************************************************************************/
 #include <time.h>
-#include "generate_level2_qa.h"
+#include "generate_class_based_qa.h"
 
 
 /******************************************************************************
-MODULE:  generate_level2_qa
+MODULE:  generate_class_based_qa
 
-PURPOSE: Generates the Level-2 QA band, using input from the input Level-1
+PURPOSE: Generates the class-based QA band, using input from the input Level-1
 quality band, and adds the band to the XML file.
 
 RETURN VALUE:
 Type = int
 Value           Description
 -----           -----------
-ERROR           Error generating the Level-2 QA
+ERROR           Error generating the class-based QA
 SUCCESS         Successfully generated
 
 NOTES:
 1. This QA band will be an unsigned 8-bit integer containing classes as
-   identified in the generate_level2_qa.h include file.
+   identified in the generate_class_based_qa.h include file.
 2. Refer to http://landsat.usgs.gov/collectionqualityband.php for the Level-1
    QA band information.
 ******************************************************************************/
-int generate_level2_qa
+int generate_class_based_qa
 (
     char *espa_xml_file    /* I: input ESPA XML filename */
 )
 {
-    char FUNC_NAME[] = "generate_level2_qa";  /* function name */
+    char FUNC_NAME[] = "generate_class_based_qa";  /* function name */
     char errmsg[STR_SIZE];     /* error message */
-    char l1_qa_file[STR_SIZE]; /* output Level-2 QA filename */
-    char l2_qa_file[STR_SIZE]; /* output Level-2 QA filename */
+    char l1_qa_file[STR_SIZE]; /* input Level-1 QA filename */
+    char l2_qa_file[STR_SIZE]; /* output class-based QA filename */
     char tmpstr[STR_SIZE];     /* tempoary string for filenames */
     char envi_file[STR_SIZE];  /* name of the output ENVI header file */
     char production_date[MAX_DATE_LEN+1]; /* current date/time for production */
@@ -56,10 +56,10 @@ int generate_level2_qa
     int nlines;                /* number of lines in the QA band */
     int nsamps;                /* number of samples in the QA band */
     int refl_indx = -99;       /* index of band1 or first band */
-    uint8_t *l2_qa = NULL;     /* Level-2 QA band values */
+    uint8_t *l2_qa = NULL;     /* class-based QA band values */
     uint16_t *l1_qa = NULL;    /* Level-1 QA band values */
     FILE *l1_fp_bqa = NULL;    /* file pointer for the Level-1 QA band */
-    FILE *l2_fp_bqa = NULL;    /* file pointer for the Level-2 QA band */
+    FILE *l2_fp_bqa = NULL;    /* file pointer for the class-based QA band */
     time_t tp;                 /* time structure */
     struct tm *tm = NULL;      /* time structure for UTC time */
     Espa_level1_qa_type qa_category;    /* type of Level-1 QA data (L4-7, L8) */
@@ -69,7 +69,7 @@ int generate_level2_qa
     Espa_internal_meta_t xml_metadata;  /* XML metadata structure to be
                                   populated by reading the XML metadata file */
     Espa_band_meta_t *l2qa_bmeta; /* pointer to the array of bands in the
-                                     Level-2 QA metadata */
+                                     class-based QA metadata */
     Espa_band_meta_t *bmeta;    /* pointer to the array of bands metadata */
     Envi_header_t envi_hdr;     /* output ENVI header information */
 
@@ -103,42 +103,43 @@ int generate_level2_qa
     /* Close the Level-1 QA file */
     close_level1_qa (l1_fp_bqa);
 
-    /* Allocate memory for the Level-2 QA band; also allocates these values
+    /* Allocate memory for the class-based QA band; also allocates these values
        to L2QA_CLEAR (0). */
     l2_qa = calloc (nlines * nsamps, sizeof (uint8_t));
     if (l2_qa == NULL)
     {
-        sprintf (errmsg, "Allocating memory for Level-2 QA data");
+        sprintf (errmsg, "Allocating memory for class-based QA data");
         error_handler (true, FUNC_NAME, errmsg);
         return (ERROR);
     }
 
-    /* Determine the name of the Level-2 QA file */
+    /* Determine the name of the class-based QA file */
     strcpy (l2_qa_file, espa_xml_file);
     cptr = strrchr (l2_qa_file, '.');
     if (!cptr)
     {
         sprintf (errmsg, "Unable to find the file extension in the XML file. "
-            "Error creating the Level-2 QA filename.");
+            "Error creating the class-based QA filename.");
         error_handler (true, FUNC_NAME, errmsg);
         return (ERROR);
     }
-    sprintf (cptr, "_level2_qa.img");
+    sprintf (cptr, "_class_based_qa.img");
 
-    /* Create the Level-2 QA file */
-    l2_fp_bqa = create_level2_qa (l2_qa_file);
+    /* Create the class-based QA file */
+    l2_fp_bqa = create_class_based_qa (l2_qa_file);
     if (l2_fp_bqa == NULL)
     {
-        sprintf (errmsg, "Unable to create the Level-2 QA file");
+        sprintf (errmsg, "Unable to create the class-based QA file");
         error_handler (true, FUNC_NAME, errmsg);
         return (ERROR);
     }
 
-    /* Loop through the pixels in the Level-1 QA band and create the Level-2 QA
-       band.  Buffers were already initialied to 0 (L2QA_CLEAR). */
+    /* Loop through the pixels in the Level-1 QA band and create the
+       class-based QA band.  Buffers were already initialied to 0
+       (L2QA_CLEAR). */
     /* Water is not available in the Level-1 QA.  The snow class is based on
        the snow/ice confidence, and the cloud shadow class is based on the 
-       cloud shadow confidence.  The Level-2 QA will be turned on for snow
+       cloud shadow confidence.  The class-based QA will be turned on for snow
        and cloud shadow if the confidence is high (i.e. both bits turned on
        is a value of 3). */
     for (i = 0; i < nlines * nsamps; i++)
@@ -153,18 +154,18 @@ int generate_level2_qa
             l2_qa[i] = L2QA_CLD_SHADOW;
     }
 
-    /* Write the Level-2 QA band */
-    if (write_level2_qa (l2_fp_bqa, nlines, nsamps, l2_qa) != SUCCESS)
+    /* Write the class-based QA band */
+    if (write_class_based_qa (l2_fp_bqa, nlines, nsamps, l2_qa) != SUCCESS)
     {
-        sprintf (errmsg, "Unable to write the entire Level-2 QA band");
+        sprintf (errmsg, "Unable to write the entire class-based QA band");
         error_handler (true, FUNC_NAME, errmsg);
         return (ERROR);
     }
 
-    /* Close the Level-2 QA file */
-    close_level2_qa (l2_fp_bqa);
+    /* Close the class-based QA file */
+    close_class_based_qa (l2_fp_bqa);
 
-    /* Free the Level-1 and Level-2 QA buffers */
+    /* Free the Level-1 and class-based QA buffers */
     free (l1_qa);
     free (l2_qa);
 
@@ -220,38 +221,39 @@ int generate_level2_qa
     /* Allocate memory for the total bands of 1 QA band */
     if (allocate_band_metadata (&l2qa_metadata, 1) != SUCCESS)
     {
-        sprintf (errmsg, "Allocating band metadata for Level-2 QA.");
+        sprintf (errmsg, "Allocating band metadata for class-based QA.");
         error_handler (true, FUNC_NAME, errmsg);
         return (ERROR);
     }
     l2qa_bmeta = &l2qa_metadata.band[0];
 
-    /* Set up the band metadata for the Level-2 QA band */
-    strcpy (l2qa_bmeta->product, "level2_qa");
+    /* Set up the band metadata for the class-based QA band */
+    strcpy (l2qa_bmeta->product, "class_based_qa");
     strcpy (l2qa_bmeta->source, "level1");
-    strcpy (l2qa_bmeta->name, "level2_qa");
+    strcpy (l2qa_bmeta->name, "class_based_qa");
     strcpy (l2qa_bmeta->category, "qa");
     l2qa_bmeta->data_type = ESPA_UINT8;
     l2qa_bmeta->nlines = nlines;
     l2qa_bmeta->nsamps = nsamps;
     strncpy (tmpstr, bmeta->short_name, 3);
-    sprintf (l2qa_bmeta->short_name, "%sL2QA", tmpstr);
-    strcpy (l2qa_bmeta->long_name, "level-2 quality band");
+    sprintf (l2qa_bmeta->short_name, "%sCLASSQA", tmpstr);
+    strcpy (l2qa_bmeta->long_name, "level-2 class-based quality band");
     l2qa_bmeta->pixel_size[0] = bmeta->pixel_size[0];
     l2qa_bmeta->pixel_size[1] = bmeta->pixel_size[1];
     strcpy (l2qa_bmeta->pixel_units, bmeta->pixel_units);
     strcpy (l2qa_bmeta->data_units, "quality/feature classification");
     l2qa_bmeta->valid_range[0] = 0.0;
     l2qa_bmeta->valid_range[1] = 255.0;
-    sprintf (l2qa_bmeta->app_version, "generate_level2_qa_%s",
+    sprintf (l2qa_bmeta->app_version, "generate_class_based_qa_%s",
         L2QA_COMMON_VERSION);
     strcpy (l2qa_bmeta->file_name, l2_qa_file);
 
-    /* Set up the classes for the Level-2 QA band */
+    /* Set up the classes for the class-based QA band */
     l2qa_bmeta->nclass = 6;
     if (allocate_class_metadata (l2qa_bmeta, 6) != SUCCESS)
     {
-        sprintf (errmsg, "Cannot allocate memory for the Level-2 QA classes");
+        sprintf (errmsg, "Cannot allocate memory for the class-based QA "
+            "classes");
         error_handler (true, FUNC_NAME, errmsg);
         return (ERROR);
     }
@@ -312,10 +314,10 @@ int generate_level2_qa
         return (ERROR);
     }
 
-    /* Add the Level-2 QA band to the XML file */
+    /* Add the class-based QA band to the XML file */
     if (append_metadata (1, l2qa_bmeta, espa_xml_file) != SUCCESS)
     {
-        sprintf (errmsg, "Appending Level-2 QA band to XML file.");
+        sprintf (errmsg, "Appending class-based QA band to XML file.");
         error_handler (true, FUNC_NAME, errmsg);
         return (ERROR);
     }
@@ -324,6 +326,6 @@ int generate_level2_qa
     free_metadata (&xml_metadata);
     free_metadata (&l2qa_metadata);
 
-    /* Successfully generated the Level-2 QA band */
+    /* Successfully generated the class-based QA band */
     return (SUCCESS);
 }
