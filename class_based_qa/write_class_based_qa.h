@@ -1,5 +1,5 @@
 /*****************************************************************************
-FILE: write_class-based_qa.h
+FILE: write_class_based_qa.h
   
 PURPOSE: Contains function prototypes for the Level-2 class-based QA band
 output.

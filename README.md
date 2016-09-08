@@ -33,7 +33,7 @@ See git tag [version_1.0.0]
     export PREFIX="path_to_directory_for_format_converter_build_data"
    ```
 
-* Install ESPA product formatter libraries and tools by downloading the source from Downloads above.  Goto the src/raw\_binary directory and build the source code there. ESPAINC and ESPALIB above refer to the include and lib directories created by building this source code using make followed by make install. The ESPA raw binary conversion tools will be located in the $PREFIX/bin directory.
+* Install ESPA product formatter libraries and tools by downloading the source from Downloads above.  Go to the src/raw\_binary directory and build the source code there. ESPAINC and ESPALIB above refer to the include and lib directories created by building this source code using make followed by make install. The ESPA raw binary conversion tools will be located in the $PREFIX/bin directory.
 
 ### Linking these libraries for other applications
 The following is an example of how to link these libraries into your
