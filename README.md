@@ -40,6 +40,7 @@ The following is an example of how to link these libraries into your
 source code. Depending on your needs, some of these libraries may not
 be needed for your application or other espa product formatter libraries may need to be added.
 ```
+ -L$(ESPA_LEVEL2QA_LIB) -l_espa_class_based_qa -l_espa_level1_qa \
  -L$(ESPALIB) -l_espa_raw_binary -l_espa_common \
  -L$(XML2LIB) -lxml2 \
  -lm
