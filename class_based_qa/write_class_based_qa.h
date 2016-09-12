@@ -20,8 +20,6 @@ NOTES:
 #include <stdint.h>
 #include <string.h>
 #include "error_handler.h"
-#include "espa_metadata.h"
-#include "parse_metadata.h"
 #include "raw_binary_io.h"
 
 /* Defines */

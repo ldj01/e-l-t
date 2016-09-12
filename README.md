@@ -4,7 +4,7 @@ Release Date: October 2016
 ESPA modules for reading and interrogating the Level-1 QA band information, and
 for supporting a Level-2 QA band.  The Level-2 QA band will include unique attributes from the Level-2 processing.
 
-This project is hosted by the US Geological Survey (USGS) Earth Resources Observation and Science (EROS) Land Satellite Data Systems (LSDS) Science Research and Development (LSRD) Project. For questions regarding this source code, please contact the Landsat Contact Us page and specify USGS CDR/ECV in the "Regarding" section. https://landsat.usgs.gov/contactus.php
+This project is provided by the US Geological Survey (USGS) Earth Resources Observation and Science (EROS) Land Satellite Data Systems (LSDS) Science Research and Development (LSRD) Project. For questions regarding this source code, please contact the Landsat Contact Us page and specify USGS CDR/ECV in the "Regarding" section. https://landsat.usgs.gov/contactus.php
 
 ### Downloads
 espa-l2qa-tools source code
