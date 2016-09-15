@@ -8,7 +8,6 @@
 LIBDIRS = \
            common      \
            level1_lib  \
-           level2_lib  \
            class_based_qa
 EXEDIRS = tools
 
