@@ -33,11 +33,15 @@ MATHLIB = -lm
 LIB1   = -L../lib -l_espa_level1_qa \
     -L$(ESPALIB) -l_espa_raw_binary -l_espa_common \
     -L$(XML2LIB) -lxml2 \
+    -L$(LZMALIB) -llzma \
+    -L$(ZLIBLIB) -lz \
     $(MATHLIB)
 
 LIB2   = -L../lib -l_espa_class_based_qa -l_espa_level1_qa \
     -L$(ESPALIB) -l_espa_raw_binary -l_espa_common \
     -L$(XML2LIB) -lxml2 \
+    -L$(LZMALIB) -llzma \
+    -L$(ZLIBLIB) -lz \
     $(MATHLIB)
 
 # Define C executables
