@@ -17,7 +17,7 @@ NOTES:
 *****************************************************************************/
 #include <time.h>
 #include "generate_class_based_qa.h"
-
+#include "read_level1_qa.h"
 
 /******************************************************************************
 MODULE:  generate_class_based_qa
