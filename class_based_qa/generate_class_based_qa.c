@@ -16,6 +16,7 @@ NOTES:
      http://espa.cr.usgs.gov/schema/espa_internal_metadata_vx_x.xsd.
 *****************************************************************************/
 #include <time.h>
+#include "qa_class_values.h"
 #include "generate_class_based_qa.h"
 #include "read_level1_qa.h"
 

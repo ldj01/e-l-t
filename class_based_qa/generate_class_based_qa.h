@@ -27,13 +27,6 @@ NOTES:
 #include "envi_header.h"
 
 /* Defines */
-#define L2QA_CLEAR 0
-#define L2QA_WATER 1
-#define L2QA_CLD_SHADOW 2
-#define L2QA_SNOW  3
-#define L2QA_CLOUD 4
-#define L2QA_FILL  255
-
 #define MAX_DATE_LEN 28
 
 /* Function prototypes */

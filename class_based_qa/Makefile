@@ -15,7 +15,8 @@ AR    = ar rcsv
 EXTRA = -Wall $(EXTRA_OPTIONS)
 
 # Define the include files
-INC = read_class_based_qa.h write_class_based_qa.h generate_class_based_qa.h
+INC = qa_class_values.h read_class_based_qa.h write_class_based_qa.h \
+      generate_class_based_qa.h
 
 # Define the source code and object files
 SRC = \
