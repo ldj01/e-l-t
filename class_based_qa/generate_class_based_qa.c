@@ -233,6 +233,7 @@ int generate_class_based_qa
     strcpy (l2qa_bmeta->name, "class_based_qa");
     strcpy (l2qa_bmeta->category, "qa");
     l2qa_bmeta->data_type = ESPA_UINT8;
+    l2qa_bmeta->fill_value = L2QA_FILL;
     l2qa_bmeta->nlines = nlines;
     l2qa_bmeta->nsamps = nsamps;
     strncpy (tmpstr, bmeta->short_name, 3);
@@ -262,7 +263,7 @@ int generate_class_based_qa
     l2qa_bmeta->class_values[2].class = 2;
     l2qa_bmeta->class_values[3].class = 3;
     l2qa_bmeta->class_values[4].class = 4;
-    l2qa_bmeta->class_values[5].class = 255;
+    l2qa_bmeta->class_values[5].class = L2QA_FILL;
     strcpy (l2qa_bmeta->class_values[0].description, "clear");
     strcpy (l2qa_bmeta->class_values[1].description, "water");
     strcpy (l2qa_bmeta->class_values[2].description, "cloud_shadow");
