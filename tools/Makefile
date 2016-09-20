@@ -22,9 +22,11 @@ SRC1 = test_read_level1_qa.c
 OBJ1 = $(SRC1:.c=.o)
 SRC2 = generate_class_based_qa.c
 OBJ2 = $(SRC2:.c=.o)
+SRC3 = dilate_class_value.c
+OBJ3 = $(SRC3:.c=.o)
 
 # Define include paths
-INCDIR  = -I. -I../include -I$(ESPAINC) -I$(XML2INC) 
+INCDIR  = -I. -I../include -I$(ESPAINC) -I$(XML2INC)
 NCFLAGS = $(EXTRA) $(INCDIR)
 
 # Define the object libraries and paths
@@ -44,10 +46,18 @@ LIB2   = -L../lib -l_espa_class_based_qa -l_espa_level1_qa \
     -L$(ZLIBLIB) -lz \
     $(MATHLIB)
 
+LIB3   = -L../lib -l_espa_class_based_qa \
+    -L$(ESPALIB) -l_espa_raw_binary -l_espa_common \
+    -L$(XML2LIB) -lxml2 \
+    -L$(LZMALIB) -llzma \
+    -L$(ZLIBLIB) -lz \
+    $(MATHLIB)
+
 # Define C executables
 EXE1 = test_read_level1_qa
 EXE2 = generate_class_based_qa
-ALL_EXES = $(EXE1) $(EXE2)
+EXE3 = dilate_class_value
+ALL_EXES = $(EXE1) $(EXE2) $(EXE3)
 
 #-----------------------------------------------------------------------------
 all: $(ALL_EXES)
@@ -57,6 +67,9 @@ $(EXE1): $(OBJ1) $(INC)
 
 $(EXE2): $(OBJ2) $(INC)
 	$(CC) $(NCFLAGS) -o $(EXE2) $(OBJ2) $(LIB2)
+
+$(EXE3): $(OBJ3) $(INC)
+	$(CC) $(NCFLAGS) -o $(EXE3) $(OBJ3) $(LIB3)
 
 #-----------------------------------------------------------------------------
 install: $(ALL_EXES)
