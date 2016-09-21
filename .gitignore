@@ -3,6 +3,10 @@
 *.o
 *.a
 
+# Specific directories #
+########################
+include
+
 # Specific exes #
 #################
 tools/generate_class_based_qa
