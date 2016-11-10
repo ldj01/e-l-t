@@ -14,6 +14,6 @@ NOTES:
 #ifndef L2QA_COMMON_H_
 #define L2QA_COMMON_H_
 
-#define L2QA_COMMON_VERSION "1.0.0"
+#define L2QA_COMMON_VERSION "1.1.0"
 
 #endif

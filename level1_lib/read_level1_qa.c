@@ -50,7 +50,6 @@ FILE *open_level1_qa
 {
     char FUNC_NAME[] = "open_level1_qa";  /* function name */
     char errmsg[STR_SIZE];    /* error message */
-    char curr_band[STR_SIZE]; /* current band to process */
     int i;                    /* looping variable */
     bool found;               /* was the Level-1 QA band found? */
     Espa_internal_meta_t xml_metadata;  /* XML metadata structure to be
@@ -83,8 +82,7 @@ FILE *open_level1_qa
     for (i = 0; i < xml_metadata.nbands; i++)
     {
         /* Is this the Level-1 quality band */
-        sprintf (curr_band, "qa");
-        if (!strcmp (bmeta[i].name, "qa") && !strcmp (bmeta[i].category, "qa"))
+        if (!strcmp (bmeta[i].name, "bqa") && !strcmp (bmeta[i].category, "qa"))
         {
             strcpy (l1_qa_file, bmeta[i].file_name);
             *nlines = bmeta[i].nlines;

@@ -1,5 +1,5 @@
-# ESPA-L2QA-TOOLS Version 1.0.0 Release Notes
-Release Date: October 2016
+# ESPA-L2QA-TOOLS Version 1.1.0 Release Notes
+Release Date: January 2017
 
 ESPA modules for reading and interrogating the Level-1 QA band information, and
 for supporting a Level-2 QA band.  The Level-2 QA band will include unique attributes from the Level-2 processing.
@@ -11,7 +11,7 @@ espa-l2qa-tools source code
 
     git clone https://github.com/USGS-EROS/espa-l2qa-tools.git
 
-See git tag [version_1.0.0]
+See git tag [version_1.1.0]
 
 ### Dependencies
   * XML2 libraries -- ftp://xmlsoft.org/libxml2/
@@ -54,4 +54,8 @@ be needed for your application or other espa product formatter libraries may nee
 
 
 ## Release Notes
-  * Initial release
+  * The Level-1 band names switched from '_bandX' to '_bX', and the QA band
+    switched to '_bqa' versus '_qa'.  This change was to make the Level-1
+    products in ESPA be similar to the Level-1 products in LPGS.  This change
+    required a few code changes in the L2 QA tools to support the new filenames.
+  * Cleaned up a few compiler warnings in the class dilation code.

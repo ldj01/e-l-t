@@ -81,11 +81,11 @@ NOTES:
 *****************************************************************************/
 short get_args
 (
-    int argc,          /* I: number of cmd-line args */
-    char *argv[],      /* I: string of cmd-line args */
-    char **xml_infile, /* O: address of input XML filename */
-    int *class_value,  /* O: address of class value variable*/
-    int *distance      /* O: address of distance value variable */
+    int argc,              /* I: number of cmd-line args */
+    char *argv[],          /* I: string of cmd-line args */
+    char **xml_infile,     /* O: address of input XML filename */
+    uint8_t *class_value,  /* O: address of class value variable*/
+    uint8_t *distance      /* O: address of distance value variable */
 )
 {
     char FUNC_NAME[] = "get_args";
@@ -132,11 +132,11 @@ short get_args
                 break;
 
             case 'c':  /* class value */
-                *class_value = atoi(optarg);
+                *class_value = (uint8_t) atoi(optarg);
                 break;
 
             case 'd':  /* distance value */
-                *distance = atoi(optarg);
+                *distance = (uint8_t) atoi(optarg);
                 break;
 
             case 'v':  /* version */
@@ -199,7 +199,6 @@ int main(int argc, char *argv[])
 {
     char FUNC_NAME[] = "main";
 
-    int status;                /* status returned from function calls */
     uint8_t class_value = 255; /* class value to dilate */
     uint8_t distance = 255;    /* search distance from the current pixel */
     int nlines = -1;           /* number of lines in the data */
