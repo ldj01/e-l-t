@@ -1,7 +1,7 @@
 /*****************************************************************************
-FILE: generate_class_based_qa.c
+FILE: generate_pixel_qa.c
   
-PURPOSE: Contains tools for the generation of the Level-2 class-based QA band.
+PURPOSE: Contains tools for the generation of the Level-2 pixel QA band.
 
 PROJECT:  Land Satellites Data System Science Research and Development (LSRD)
 at the USGS EROS
@@ -15,7 +15,7 @@ NOTES:
      http://espa.cr.usgs.gov/schema/espa_internal_metadata_v1_0.xsd.
 *****************************************************************************/
 #include <getopt.h>
-#include "generate_class_based_qa.h"
+#include "generate_pixel_qa.h"
 
 /******************************************************************************
 MODULE: usage
@@ -29,19 +29,18 @@ NOTES:
 ******************************************************************************/
 void usage ()
 {
-    printf ("generate_class_based_qa is a program that opens the Level-1 QA "
-            "band and generates the cfmask-like class-based QA band. This is "
-            "a class-based band which matches the class values used in cfmask, "
-            "but the values are instead generated from the input Level-1 "
-            "quality band. Water values are not yet populated, but are handled "
-            "in a downstream application.\n\n");
-    printf ("usage: generate_class_based_qa --xml=input_xml_filename\n");
+    printf ("generate_pixel_qa is a program that opens the Level-1 QA band and "
+            "generates the cfmask-like pixel QA band. This is a bit-packed "
+            "band which uses the input Level-1 quality band. Water values are "
+            "not yet populated, but are handled in a downstream application. "
+            "The cloud values are populated, but they will also be dilated in "
+            "a downstream application.\n\n");
+    printf ("usage: generate_pixel_qa --xml=input_xml_filename\n");
 
     printf ("\nwhere the following parameters are required:\n");
     printf ("    -xml: name of the input XML metadata file which follows "
             "the ESPA internal raw binary schema\n");
-    printf ("\nExample: generate_class_based_qa "
-            "--xml=LE70230282011250EDC00.xml\n");
+    printf ("\nExample: generate_pixel_qa --xml=LE70230282011250EDC00.xml\n");
 }
 
 
@@ -136,15 +135,15 @@ short get_args
 /******************************************************************************
 MODULE:  main
 
-PURPOSE:  Reads the Level-1 quality band and generates the class-based QA band,
-using the same class values as were output in the ESPA cfmask application.
+PURPOSE:  Reads the Level-1 quality band and generates the initial Level-2
+pixel QA band.
 
 RETURN VALUE:
 Type = int
 Value           Description
 -----           -----------
-ERROR           Error with the class-based QA generation
-SUCCESS         No errors with the class-based QA generation
+ERROR           Error with the pixel QA generation
+SUCCESS         No errors with the pixel QA generation
 
 NOTES:
 ******************************************************************************/
@@ -159,9 +158,9 @@ int main (int argc, char** argv)
         exit (EXIT_FAILURE);
     }
 
-    /* Read the Level-1 quality band and generate the class-based QA band */
-    printf ("Starting generation of Level-2 QA class-based band ...\n");
-    status = generate_class_based_qa (xml_infile);
+    /* Read the Level-1 quality band and generate the pixel QA band */
+    printf ("Starting generation of Level-2 QA pixel band ...\n");
+    status = generate_pixel_qa (xml_infile);
     if (status != SUCCESS)
     {  /* Error messages already written */
         exit (EXIT_FAILURE);
@@ -171,6 +170,6 @@ int main (int argc, char** argv)
     free (xml_infile);
 
     /* Successful completion */
-    printf ("Successful generation of class-based QA!\n");
+    printf ("Successful generation of pixel QA!\n");
     exit (EXIT_SUCCESS);
 }

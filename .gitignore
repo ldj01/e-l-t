@@ -9,7 +9,8 @@ include
 
 # Specific exes #
 #################
-tools/generate_class_based_qa
+tools/generate_pixel_qa
 tools/test_read_level1_qa
+tools/test_read_pixel_qa
 tools/dilate_class_value
 
