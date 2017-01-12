@@ -22,7 +22,7 @@ SRC1 = test_read_level1_qa.c
 OBJ1 = $(SRC1:.c=.o)
 SRC2 = generate_pixel_qa.c
 OBJ2 = $(SRC2:.c=.o)
-SRC3 = dilate_class_value.c
+SRC3 = dilate_pixel_qa.c
 OBJ3 = $(SRC3:.c=.o)
 SRC4 = test_read_pixel_qa.c
 OBJ4 = $(SRC4:.c=.o)
@@ -65,7 +65,7 @@ LIB4   = -L../lib -l_espa_pixel_qa \
 # Define C executables
 EXE1 = test_read_level1_qa
 EXE2 = generate_pixel_qa
-#EXE3 = dilate_class_value
+EXE3 = dilate_pixel_qa
 EXE4 = test_read_pixel_qa
 ALL_EXES = $(EXE1) $(EXE2) $(EXE3) $(EXE4)
 

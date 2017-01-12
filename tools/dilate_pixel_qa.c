@@ -1,7 +1,7 @@
 /*****************************************************************************
-File: dilate_class_value.c
+File: dilate_pixel_qa.c
 
-Purpose: Modify in-place a class value within the class band.
+Purpose: Modify in-place a bit from each value in the bit-packed QA band.
 
 Project:  Land Satellites Data System Science Research and Development (LSRD)
           at the USGS EROS
@@ -13,13 +13,13 @@ License Type:  NASA Open Source Agreement Version 1.3
 #include <getopt.h>
 
 #include "l2qa_common.h"
-#include "qa_class_values.h"
-#include "read_class_based_qa.h"
-#include "write_class_based_qa.h"
-#include "class_dilation.h"
+#include "pixel_qa.h"
+#include "read_pixel_qa.h"
+#include "write_pixel_qa.h"
+#include "pixel_qa_dilation.h"
 
 
-#define PROG_NAME "dilate_class_value"
+#define PROG_NAME "dilate_pixel_qa"
 
 
 /*****************************************************************************
@@ -31,19 +31,20 @@ Return Value: None
 *****************************************************************************/
 void usage()
 {
-    printf("%s is a program that opens the Class Based QA"
-           " band and dilates the specified class value with the specified"
-           " distance.\n\n", PROG_NAME);
+    printf("%s is a program that dilates the specified bit of the bit-packed"
+           " QA band with the specified distance.\n\n", PROG_NAME);
 
     printf("usage: %s --xml=<xml_filename>"
-           " --class=<class> --distance=<distance>\n\n", PROG_NAME);
+           " --bit=<bit> --distance=<distance>\n\n", PROG_NAME);
 
     printf("where the following parameters are required:\n");
     printf("    -xml: name of the input XML metadata file which follows"
            " the ESPA internal raw binary schema\n");
-    printf("    -class: class value to dilate\n");
+    printf("    -bit: bit value to dilate (0=fill, 1=clear, 2=water, 3=cloud"
+           " shadow, 4=snow, 5=cloud, 6=cloud confidence 1, 7=cloud"
+           " confidence 2)\n");
     printf("    -distance: search distance from current pixel\n");
-    printf("\nExample: %s --xml=LE70230282011250EDC00.xml --class=4"
+    printf("\nExample: %s --xml=LE70230282011250EDC00.xml --bit=5"
            " --distance=3\n", PROG_NAME);
 }
 
@@ -84,7 +85,7 @@ short get_args
     int argc,              /* I: number of cmd-line args */
     char *argv[],          /* I: string of cmd-line args */
     char **xml_infile,     /* O: address of input XML filename */
-    uint8_t *class_value,  /* O: address of class value variable*/
+    uint8_t *bit_value,    /* O: address of bit value variable */
     uint8_t *distance      /* O: address of distance value variable */
 )
 {
@@ -96,7 +97,7 @@ short get_args
     static struct option long_options[] =
     {
         {"xml", required_argument, 0, 'i'},
-        {"class", required_argument, 0, 'c'},
+        {"bit", required_argument, 0, 'b'},
         {"distance", required_argument, 0, 'd'},
         {"version", no_argument, 0, 'v'},
         {"help", no_argument, 0, 'h'},
@@ -131,8 +132,8 @@ short get_args
                 *xml_infile = strdup(optarg);
                 break;
 
-            case 'c':  /* class value */
-                *class_value = (uint8_t) atoi(optarg);
+            case 'b':  /* bit value */
+                *bit_value = (uint8_t) atoi(optarg);
                 break;
 
             case 'd':  /* distance value */
@@ -163,9 +164,9 @@ short get_args
         return ERROR;
     }
 
-    if (*class_value == 255)
+    if (*bit_value == 255)
     {
-        snprintf(msg, sizeof(msg), "--class is a required argument");
+        snprintf(msg, sizeof(msg), "--bit is a required argument");
         error_handler(true, FUNC_NAME, msg);
         usage();
         return ERROR;
@@ -186,8 +187,8 @@ short get_args
 /*****************************************************************************
 Method:  main
 
-Description:  Reads the class based qa band and updates it with a dilation
-              of the specified class.
+Description:  Reads the bit-packed QA band and updates it with a dilation
+              of the specified bit.
 
 RETURN VALUE: Type = int
 Value           Description
@@ -199,85 +200,86 @@ int main(int argc, char *argv[])
 {
     char FUNC_NAME[] = "main";
 
-    uint8_t class_value = 255; /* class value to dilate */
+    uint8_t bit_value = 255;   /* bit to dilate */
     uint8_t distance = 255;    /* search distance from the current pixel */
     int nlines = -1;           /* number of lines in the data */
     int nsamps = -1;           /* number of samples in the data */
 
     char *xml_infile = NULL; /* XML input filename */
     char msg[STR_SIZE];      /* error message */
-    char class_based_filename[PATH_MAX];
+    char input_qa_filename[PATH_MAX];
 
-    FILE *class_based_fd = NULL;
+    FILE *input_qa_fd = NULL;
 
-    uint8_t *idata = NULL; /* Holds the class based input data */
-    uint8_t *ddata = NULL; /* Holds the dilated class based output data */
+    uint16_t *idata = NULL; /* Holds the bit-packed input data */
+    uint16_t *ddata = NULL; /* Holds the dilated bit-packed output data */
 
     /* Read the command line arguments */
-    if (get_args(argc, argv, &xml_infile, &class_value, &distance)
+    if (get_args(argc, argv, &xml_infile, &bit_value, &distance)
         != SUCCESS)
     {
         return EXIT_FAILURE;
     }
 
     /* Open the input band */
-    class_based_fd = open_class_based_qa(xml_infile, class_based_filename,
-                                         &nlines, &nsamps);
-    if (class_based_fd == NULL)
+    input_qa_fd = open_pixel_qa(xml_infile, input_qa_filename, &nlines,
+         &nsamps);
+                                         
+    if (input_qa_fd == NULL)
     {
         snprintf(msg, sizeof(msg), "opening input band data for reading");
         error_handler(true, FUNC_NAME, msg);
         return EXIT_FAILURE;
     }
 
-    printf("%s, %d, %d\n", xml_infile, class_value, distance);
-    printf("%s, %d, %d\n", class_based_filename, nlines, nsamps);
+    printf("%s, %d, %d\n", xml_infile, bit_value, distance);
+    printf("%s, %d, %d\n", input_qa_filename, nlines, nsamps);
 
     /* Allocate memory for the input and output */
-    idata = calloc(nlines * nsamps, sizeof(uint8_t));
+    idata = calloc(nlines * nsamps, sizeof(uint16_t));
     if (idata == NULL)
     {
-        fclose(class_based_fd);
+        fclose(input_qa_fd);
         snprintf(msg, sizeof(msg), "allocating memory for input band data");
         error_handler(true, FUNC_NAME, msg);
         return EXIT_FAILURE;
     }
 
-    ddata = calloc(nlines * nsamps, sizeof(uint8_t));
+    ddata = calloc(nlines * nsamps, sizeof(uint16_t));
     if (ddata == NULL)
     {
         free(idata);
-        fclose(class_based_fd);
+        fclose(input_qa_fd);
         snprintf(msg, sizeof(msg), "allocating memory for output band data");
         error_handler(true, FUNC_NAME, msg);
         return EXIT_FAILURE;
     }
 
     /* Read the band into memory here */
-    if (read_class_based_qa(class_based_fd, nlines, nsamps, idata)
+    if (read_pixel_qa(input_qa_fd, nlines, nsamps, idata)
         != SUCCESS)
     {
         free(idata);
         free(ddata);
-        fclose(class_based_fd);
+        fclose(input_qa_fd);
         snprintf(msg, sizeof(msg), "reading input band data");
         error_handler(true, FUNC_NAME, msg);
         return EXIT_FAILURE;
     }
     /* Close the READ input band file descriptor */
-    fclose(class_based_fd);
-    class_based_fd = NULL;
+    fclose(input_qa_fd);
+    input_qa_fd = NULL;
 
     /* Process dilation here */
-    dilate_class_value(idata, class_value, distance, nlines, nsamps, ddata);
+    dilate_pixel_qa(idata, bit_value, distance, nlines, nsamps, ddata);
 
     /* Free the input memory */
     free(idata);
     idata = NULL;
 
     /* Open the WRITE output band file descriptor */
-    class_based_fd = create_class_based_qa(class_based_filename);
-    if (class_based_fd == NULL)
+    input_qa_fd = create_pixel_qa(input_qa_filename);
+    if (input_qa_fd == NULL)
     {
         free(ddata);
         snprintf(msg, sizeof(msg), "opening output band data for reading");
@@ -286,17 +288,17 @@ int main(int argc, char *argv[])
     }
 
     /* Write the dilated memory out to the file */
-    if (write_class_based_qa(class_based_fd, nlines, nsamps, ddata)
+    if (write_pixel_qa(input_qa_fd, nlines, nsamps, ddata)
         != SUCCESS)
     {
         free(ddata);
-        sprintf (msg, "unable to write the entire class-based QA band");
+        sprintf (msg, "unable to write the entire bit-packed QA band");
         error_handler (true, FUNC_NAME, msg);
         return EXIT_FAILURE;
     }
     /* Close the WRITE output band file descriptor */
-    fclose(class_based_fd);
-    class_based_fd = NULL;
+    fclose(input_qa_fd);
+    input_qa_fd = NULL;
 
     /* Free the output memory */
     free(ddata);

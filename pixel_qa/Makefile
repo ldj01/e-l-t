@@ -15,13 +15,15 @@ AR    = ar rcsv
 EXTRA = -Wall $(EXTRA_OPTIONS)
 
 # Define the include files
-INC = pixel_qa.h read_pixel_qa.h write_pixel_qa.h generate_pixel_qa.h
+INC = pixel_qa.h read_pixel_qa.h write_pixel_qa.h generate_pixel_qa.h \
+      pixel_qa_dilation.h
 
 # Define the source code and object files
 SRC = \
       read_pixel_qa.c \
       write_pixel_qa.c \
-      generate_pixel_qa.c
+      generate_pixel_qa.c \
+      pixel_qa_dilation.c
 OBJ = $(SRC:.c=.o)
 
 # Define include paths
