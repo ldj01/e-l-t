@@ -39,4 +39,8 @@ LICENSE TYPE:  NASA Open Source Agreement Version 1.3
 #define L2QA_SINGLE_BIT 0x01             /* 00000001 */
 #define L2QA_DOUBLE_BIT 0x03             /* 00000011 */
 
+#define L2QA_LOW_CONF 1           /* low confidence (01) */
+#define L2QA_MODERATE_CONF 2      /* moderate confidence (10) */
+#define L2QA_HIGH_CONF 3          /* high confidence (11) */
+
 #endif /* PIXEL_QA_H */

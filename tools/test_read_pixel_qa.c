@@ -31,7 +31,7 @@ NOTES:
 void usage ()
 {
     printf ("test_read_pixel_qa is a simple test program that opens, reads, "
-            "and closed the Level-2 pixel QA band. It prints out a few pixel "
+            "and closes the Level-2 pixel QA band. It prints out a few pixel "
             "values to allow for verification of the read.  It also uses the "
             "Level-2 pixel QA interrogation functions to determine cloud, "
             "shadow, etc. and other QA bits for testing those functions.\n\n");

@@ -40,7 +40,7 @@ int read_pixel_qa
     int nsamps,             /* I: number of samples to read from the QA file */
     uint16_t *pixel_qa      /* O: pixel QA band values for the specified number
                                   of lines (memory should be allocated for
-                                  nlines x nsamps of size uint8 before calling
+                                  nlines x nsamps of size uint16 before calling
                                   this routine) */
 );
 

@@ -37,18 +37,18 @@ void dilate_pixel_qa
     int row, col;
     int window_row;
     int window_col;
-    int start_row;      /* start */
-    int start_col;      /* start */
-    int end_row;        /* end */
-    int end_col;        /* end */
+    int start_row;      /* start row */
+    int start_col;      /* start column */
+    int end_row;        /* end row */
+    int end_col;        /* end column */
     /* locations */
     int row_index;
     int window_row_index;  /* window */
     int output_index;
     int input_index;
-    uint16_t input_val; /* Value for specified bit from input QA band */
-    int user_bit_mask;  /* Mask based on the search bit */
-    int cleaning_bit_mask; /* Mask based on bits to clean because otherwise 
+    uint16_t input_val; /* value for specified bit from input QA band */
+    int user_bit_mask;  /* mask based on the search bit */
+    int cleaning_bit_mask; /* mask based on bits to clean because otherwise 
                            they would contradict the search bit */
 
     /* Set the mask to dilate the user-selected bit. */

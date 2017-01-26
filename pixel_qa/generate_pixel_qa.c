@@ -105,7 +105,7 @@ int generate_pixel_qa
     /* Close the Level-1 QA file */
     close_level1_qa (l1_fp_bqa);
 
-    /* Allocate memory for the pixel QA band; also allocates these values
+    /* Allocate memory for the pixel QA band; also initializes these values
        to L2QA_CLEAR. */
     l2_qa = calloc (nlines * nsamps, sizeof (uint16_t));
     if (l2_qa == NULL)
@@ -157,13 +157,13 @@ int generate_pixel_qa
         }
         else
         { /* if it's not fill, then multiple options can apply */
-            if (level1_qa_cloud_shadow_confidence (l1_qa[i]) == 3)
+            if (level1_qa_cloud_shadow_confidence (l1_qa[i]) == L2QA_HIGH_CONF)
             {
                 l2_qa[i] &= ~(1 << L2QA_CLEAR);
                 l2_qa[i] |= (1 << L2QA_CLD_SHADOW);
             }
 
-            if (level1_qa_snow_ice_confidence (l1_qa[i]) == 3)
+            if (level1_qa_snow_ice_confidence (l1_qa[i]) == L2QA_HIGH_CONF)
             {
                 l2_qa[i] &= ~(1 << L2QA_CLEAR);
                 l2_qa[i] |= (1 << L2QA_SNOW);
@@ -175,13 +175,13 @@ int generate_pixel_qa
                 l2_qa[i] |= (1 << L2QA_CLOUD);
             }
 
-            if (level1_qa_cloud_confidence (l1_qa[i]) == 1) /* low cloud */
+            if (level1_qa_cloud_confidence (l1_qa[i]) == L2QA_LOW_CONF)
                 l2_qa[i] |= (1 << L2QA_CLOUD_CONF1);
 
-            if (level1_qa_cloud_confidence (l1_qa[i]) == 2) /* moderate cloud */
+            if (level1_qa_cloud_confidence (l1_qa[i]) == L2QA_MODERATE_CONF)
                 l2_qa[i] |= (1 << L2QA_CLOUD_CONF2);
 
-            if (level1_qa_cloud_confidence (l1_qa[i]) == 3) /* high cloud */
+            if (level1_qa_cloud_confidence (l1_qa[i]) == L2QA_HIGH_CONF)
             {
                 l2_qa[i] &= ~(1 << L2QA_CLEAR);
                 l2_qa[i] |= (1 << L2QA_CLOUD_CONF1);

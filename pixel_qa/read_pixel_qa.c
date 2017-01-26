@@ -31,7 +31,7 @@ NULL            Error parsing the XML file or opening the pixel QA band
 not NULL        Successfully read
 
 NOTES:
-1. It is expected that this QA band will be an unsigned 8-bit integer. If the
+1. It is expected that this QA band will be an unsigned 16-bit integer. If the
    data type does not match that expectation, then an error will be flagged
    when obtaining information about the QA band from the XML file.
 2. A file pointer to the pixel QA band will be returned. It is expected the
