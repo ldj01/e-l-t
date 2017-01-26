@@ -42,7 +42,6 @@ void dilate_pixel_qa
     int end_row;        /* end row */
     int end_col;        /* end column */
     /* locations */
-    int row_index;
     int window_row_index;  /* window */
     int output_index;
     int input_index;
@@ -67,20 +66,24 @@ void dilate_pixel_qa
         cleaning_bit_mask &= ~(1 << L2QA_CLD_SHADOW);
     }
 
+    /* Scan through all of the pixels in the image, skipping fill.  For each
+       pixel, search the region specified by the caller around the pixel to 
+       see if the requested bit is on in any pixel in the region.  If one is
+       found, the current pixel is within the dilation region of the 2nd pixel,
+       so set the requested bit for the current pixel on */
+
 #ifdef _OPENMP
-    #pragma omp parallel for private(start_row, end_row, row_index, col, output_index, start_col, end_col, found, window_row, window_row_index, window_col, input_index)
+    #pragma omp parallel for private(start_row, end_row, col, output_index, start_col, end_col, found, window_row, window_row_index, window_col, input_index)
 #endif
     for (row = 0; row < nrows; row++)
     {
         start_row = row - distance;
         end_row = row + distance;
 
-        row_index = row * ncols;
+        output_index = row * ncols;
 
-        for (col = 0; col < ncols; col++)
+        for (col = 0; col < ncols; col++, output_index++)
         {
-            output_index = row_index + col;
-
             /* Skip processing input that is a fill pixel */
             if (pixel_qa_is_fill(input_data[output_index]))
             {
@@ -94,7 +97,7 @@ void dilate_pixel_qa
             found = false;
             /* For each row in the window */
             for (window_row = start_row;
-                 window_row < end_row + 1 && !found;
+                 window_row <= end_row && !found;
                  window_row++)
             {
                 /* Skip out of bounds locations */
@@ -105,7 +108,7 @@ void dilate_pixel_qa
 
                 /* For each column in the window */
                 for (window_col = start_col;
-                     window_col < end_col + 1;
+                     window_col <= end_col;
                      window_col++)
                 {
                     /* Skip out of bounds locations */

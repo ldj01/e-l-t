@@ -104,6 +104,10 @@ short get_args
         {0, 0, 0, 0}
     };
 
+    /* Initialize variables so we can verify the tool's caller set them */
+    *bit_value = 255;
+    *distance = 255;
+
     /* Loop through all the cmd-line options */
     opterr = 0;   /* turn off getopt_long error msgs as we'll print our own */
     while (1)
@@ -200,8 +204,8 @@ int main(int argc, char *argv[])
 {
     char FUNC_NAME[] = "main";
 
-    uint8_t bit_value = 255;   /* bit to dilate */
-    uint8_t distance = 255;    /* search distance from the current pixel */
+    uint8_t bit_value;         /* bit to dilate */
+    uint8_t distance;          /* search distance from the current pixel */
     int nlines = -1;           /* number of lines in the data */
     int nsamps = -1;           /* number of samples in the data */
 
