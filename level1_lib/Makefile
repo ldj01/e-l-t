@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# Makefile for LaSRC code
+# Makefile for Level-1 library code
 #-----------------------------------------------------------------------------
 .PHONY: all install-headers install-lib install clean
 
