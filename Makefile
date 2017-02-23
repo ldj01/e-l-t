@@ -8,6 +8,7 @@
 LIBDIRS = \
            common      \
            level1_lib  \
+           level2_lib  \
            pixel_qa
 EXEDIRS = tools
 
