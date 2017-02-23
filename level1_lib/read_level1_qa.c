@@ -96,6 +96,7 @@ FILE *open_level1_qa
                 return (NULL);
             }
             found = true;
+            break;
         }
     }
 
@@ -186,7 +187,7 @@ NOTES:
 ******************************************************************************/
 void close_level1_qa
 (
-    FILE *fp_bqa           /* I/O: pointer to the open Level-1 QA band;will
+    FILE *fp_bqa           /* I/O: pointer to the open Level-1 QA band; will
                                    be closed upon return */
 )
 {
