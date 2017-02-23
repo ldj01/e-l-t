@@ -1,5 +1,5 @@
-# ESPA-L2QA-TOOLS Version 1.2.0 Release Notes
-Release Date: February 2017
+# ESPA-L2QA-TOOLS Version 1.3.0 Release Notes
+Release Date: March 2017
 
 ESPA modules for reading and interrogating the Level-1 QA band information, and
 for supporting a Level-2 QA band.  The Level-2 QA band will include unique attributes from the Level-2 processing.
@@ -11,7 +11,7 @@ espa-l2qa-tools source code
 
     git clone https://github.com/USGS-EROS/espa-l2qa-tools.git
 
-See git tag [version_1.2.0]
+See git tag [version_1.3.0]
 
 ### Dependencies
   * XML2 libraries -- ftp://xmlsoft.org/libxml2/
@@ -41,6 +41,7 @@ source code. Depending on your needs, some of these libraries may not
 be needed for your application or other espa product formatter libraries may need to be added.
 ```
  -L$(ESPA_LEVEL2QA_LIB) -l_espa_class_based_qa -l_espa_level1_qa \
+                        -l_espa_level2_qa \
  -L$(ESPALIB) -l_espa_raw_binary -l_espa_common \
  -L$(XML2LIB) -lxml2 \
  -lm
@@ -54,10 +55,5 @@ be needed for your application or other espa product formatter libraries may nee
 
 
 ## Release Notes
-  * The Level-2 QA band will now be named "pixel_qa" to indicate that it's a
-    pixel-level quality band.
-  * The Level-2 QA band is now a 16-bit packed QA band versus a class-based
-    band.
-  * Added inline functions to allow interrogation of the Level-2 QA bits.
-  * Modified the dilation and associated functions to work with the bit-packed
-    QA band, both for reading and updating the QA results.
+  * Provided tools to read the Level-2 QA bands from LEDAPS (radsat and cloud)
+    and LaSRC (aerosol).

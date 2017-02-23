@@ -239,6 +239,7 @@ int main (int argc, char** argv)
     printf ("Pixel line 1560, sample 6305: %d\n", level2_qa[1560*nsamps+6305]);
     printf ("Pixel line 3589, sample 6898: %d\n", level2_qa[3589*nsamps+6898]);
     printf ("Pixel line 775, sample 3468: %d\n", level2_qa[775*nsamps+3468]);
+    printf ("Pixel line 2335, sample 4403: %d\n", level2_qa[2335*nsamps+4403]);
 
     /* Test the pixel interrogation for LEDAPS RADSAT */
     if (qa_type == LEDAPS_RADSAT)
