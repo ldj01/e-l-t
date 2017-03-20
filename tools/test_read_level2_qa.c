@@ -31,11 +31,11 @@ NOTES:
 void usage ()
 {
     printf ("test_read_level2_qa is a simple test program that opens, reads, "
-            "and closed the Level-2 QA band. It prints out a few pixel values "
+            "and closes the Level-2 QA band. It prints out a few pixel values "
             "to allow for verification of the read.  It also uses the "
             "Level-2 QA interrogation functions to determine cloud, shadow, "
-            "saturation, aerosol levels, etc. and other QA bits for testing "
-            "those functions.\n\n");
+            "saturation, aerosol levels, and other QA bits for testing those "
+            "functions.\n\n");
     printf ("usage: test_read_level2_qa --xml=input_xml_filename "
             "--qa_type=type_of_qa_band_to_read\n");
 
@@ -66,9 +66,9 @@ ERROR           Error getting the command-line arguments or a command-line
 SUCCESS         No errors encountered
 
 NOTES:
-  1. Memory is allocated for the input and output files.  All of these should
-     be character pointers set to NULL on input.  The caller is responsible
-     for freeing the allocated memory upon successful return.
+  1. Memory is allocated for the input file.  This should be a character
+     pointers set to NULL on input.  The caller is responsible for freeing the
+     allocated memory upon successful return.
 ******************************************************************************/
 short get_args
 (

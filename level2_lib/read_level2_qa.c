@@ -100,8 +100,8 @@ FILE *open_level2_qa
             if (bmeta[i].data_type != ESPA_UINT8)
             {
                 sprintf (errmsg, "Expecting UINT8 data type for Level-2 QA "
-                    "band, however the data type was something other than "
-                    "UINT8.  Please check the input XML file.");
+                    "band (%s), however the data type was something other than "
+                    "UINT8.  Please check the input XML file.", bmeta[i].name);
                 error_handler (true, FUNC_NAME, errmsg);
                 return (NULL);
             }
@@ -113,7 +113,23 @@ FILE *open_level2_qa
     /* Make sure the desired Level-2 QA band was found */
     if (!found)
     {
-        sprintf (errmsg, "Unable to find the specified Level-2 QA band");
+        switch (qa_category)
+        {
+            case LEDAPS_RADSAT:
+                sprintf (errmsg, "Unable to find the specified Level-2 QA band "
+                    "for LEDAPS RADSAT: radsat_qa");
+                break;
+
+            case LEDAPS_CLOUD:
+                sprintf (errmsg, "Unable to find the specified Level-2 QA band "
+                    "for LEDAPS CLOUD: sr_cloud_qa");
+                break;
+
+            case LASRC_AEROSOL:
+                sprintf (errmsg, "Unable to find the specified Level-2 QA band "
+                    "for LASRC AEROSOL: sr_aerosol");
+                break;
+        }
         error_handler (true, FUNC_NAME, errmsg);
         return (NULL);
     }
@@ -165,7 +181,7 @@ int read_level2_qa
     char FUNC_NAME[] = "read_level2_qa";  /* function name */
     char errmsg[STR_SIZE];    /* error message */
 
-    /* Read the current line from the band quality band */
+    /* Read the current line(s) from the band quality band */
     if (read_raw_binary (fp_l2qa, nlines, nsamps, sizeof (uint8_t), level2_qa)
         != SUCCESS)
     {   
