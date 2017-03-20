@@ -56,4 +56,4 @@ be needed for your application or other espa product formatter libraries may nee
 
 ## Release Notes
   * Provided tools to read the Level-2 QA bands from LEDAPS (radsat and cloud)
-    and LaSRC (aerosol).
+    and LaSRC (radsat and aerosol).
