@@ -142,7 +142,7 @@ int generate_pixel_qa
     /* Loop through the pixels in the Level-1 QA band and create the pixel QA
        band.  Buffers were already initialized with the L2QA_CLEAR bit set.  It
        needs to be turned off if any condition is turned on, except the low or
-       moderate cloud confidence. */
+       moderate cloud or cirrus confidence. */
     /* Water is not available in the Level-1 QA.  The snow class is based on
        the snow/ice confidence, and the cloud shadow class is based on the 
        cloud shadow confidence.  The pixel QA will be turned on for snow and
@@ -186,6 +186,30 @@ int generate_pixel_qa
                 l2_qa[i] &= ~(1 << L2QA_CLEAR);
                 l2_qa[i] |= (1 << L2QA_CLOUD_CONF1);
                 l2_qa[i] |= (1 << L2QA_CLOUD_CONF2);
+            }
+
+            /* Cirrus confidence and terrain occlusion only apply for L8 */
+            if (qa_category == LEVEL1_L8)
+            {
+                if (level1_qa_cirrus_confidence (l1_qa[i]) == L2QA_LOW_CONF)
+                    l2_qa[i] |= (1 << L2QA_CIRRUS_CONF1);
+
+                if (level1_qa_cirrus_confidence (l1_qa[i]) ==
+                    L2QA_MODERATE_CONF)
+                    l2_qa[i] |= (1 << L2QA_CIRRUS_CONF2);
+
+                if (level1_qa_cirrus_confidence (l1_qa[i]) == L2QA_HIGH_CONF)
+                {
+                    l2_qa[i] &= ~(1 << L2QA_CLEAR);
+                    l2_qa[i] |= (1 << L2QA_CIRRUS_CONF1);
+                    l2_qa[i] |= (1 << L2QA_CIRRUS_CONF2);
+                }
+
+                if (level1_qa_is_terrain_occluded (l1_qa[i]))
+                {
+                    l2_qa[i] &= ~(1 << L2QA_CLEAR);
+                    l2_qa[i] |= (1 << L2QA_TERRAIN_OCCL);
+                }
             }
         }
     }
@@ -308,6 +332,15 @@ int generate_pixel_qa
     strcpy (l2qa_bmeta->bitmap_description[13], "unused");
     strcpy (l2qa_bmeta->bitmap_description[14], "unused");
     strcpy (l2qa_bmeta->bitmap_description[15], "unused");
+
+    /* If processing L8, then we need to support the cirrus confidence and
+       terrain occlusion */
+    if (qa_category == LEVEL1_L8)
+    {
+        strcpy (l2qa_bmeta->bitmap_description[8], "cirrus confidence");
+        strcpy (l2qa_bmeta->bitmap_description[9], "cirrus confidence");
+        strcpy (l2qa_bmeta->bitmap_description[10], "terrain occlusion");
+    }
 
     /* Get the current date/time (UTC) for the production date of each band */
     if (time (&tp) == -1)

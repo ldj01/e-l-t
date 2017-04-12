@@ -24,6 +24,9 @@ LICENSE TYPE:  NASA Open Source Agreement Version 1.3
    application which dilates the clouds)
 6: cloud confidence (pulled from level-1 QA)
 7: cloud confidence (pulled from level-1 QA)
+8: cirrus confidence (pulled from level-1 QA, L8 only)
+9: cirrus confidence (pulled from level-1 QA, L8 only)
+10: terrain occlusion (pulled from level-1 QA, L8 only)
 8-15: reserved for later use
 */
 
@@ -35,6 +38,9 @@ LICENSE TYPE:  NASA Open Source Agreement Version 1.3
 #define L2QA_CLOUD 5
 #define L2QA_CLOUD_CONF1 6
 #define L2QA_CLOUD_CONF2 7
+#define L2QA_CIRRUS_CONF1 8
+#define L2QA_CIRRUS_CONF2 9
+#define L2QA_TERRAIN_OCCL 10
 
 #define L2QA_SINGLE_BIT 0x01             /* 00000001 */
 #define L2QA_DOUBLE_BIT 0x03             /* 00000011 */

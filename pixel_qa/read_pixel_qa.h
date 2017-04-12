@@ -242,4 +242,60 @@ static inline uint8_t pixel_qa_cloud_confidence
     return ((l2_qa_pix >> L2QA_CLOUD_CONF1) & L2QA_DOUBLE_BIT);
 }
 
+/******************************************************************************
+MODULE:  pixel_qa_cirrus_confidence
+
+PURPOSE: Returns the cirrus confidence value (0-3) for the current Level-2
+pixel QA pixel value. These are valid for L8 only.
+
+RETURN VALUE:
+Type = uint8_t
+Value           Description
+-----           -----------
+0               Cirrus confidence bits are 00
+1               Cirrus confidence bits are 01
+2               Cirrus confidence bits are 10
+3               Cirrus confidence bits are 11
+
+NOTES:
+1. This is an inline function so it should be fast as the function call overhead
+   is eliminated by dropping the code inline with the original application.
+******************************************************************************/
+static inline uint8_t pixel_qa_cirrus_confidence
+(
+    uint16_t l2_qa_pix      /* I: Pixel QA value for current pixel */
+)
+{
+    return ((l2_qa_pix >> L2QA_CIRRUS_CONF1) & L2QA_DOUBLE_BIT);
+}
+
+/******************************************************************************
+MODULE:  pixel_qa_is_terrain_occluded
+
+PURPOSE: Determines if the current Level-2 pixel QA pixel is terrain occluded.
+This is valid for L8 only.
+
+RETURN VALUE:
+Type = boolean
+Value           Description
+-----           -----------
+true            Pixel is terrain occluded
+false           Pixel is not terrain occluded
+
+NOTES:
+1. This is an inline function so it should be fast as the function call overhead
+   is eliminated by dropping the code inline with the original application.
+******************************************************************************/
+static inline bool pixel_qa_is_terrain_occluded
+(
+    uint16_t l2_qa_pix      /* I: Pixel QA value for current pixel */
+)
+{
+    if (((l2_qa_pix >> L2QA_TERRAIN_OCCL) & L2QA_SINGLE_BIT) == 1)
+        return true;
+    else
+        return false;
+}
+
+
 #endif
