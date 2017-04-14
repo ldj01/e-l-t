@@ -42,7 +42,8 @@ void usage()
            " the ESPA internal raw binary schema\n");
     printf("    -bit: bit value to dilate (0=fill, 1=clear, 2=water, 3=cloud"
            " shadow, 4=snow, 5=cloud, 6=cloud confidence 1, 7=cloud"
-           " confidence 2)\n");
+           " confidence 2, 8=cirrus confidence 1, 9=cirrus confidence 2),"
+           " 10=terrain occlusion\n");
     printf("    -distance: search distance from current pixel\n");
     printf("\nExample: %s --xml=LE70230282011250EDC00.xml --bit=5"
            " --distance=3\n", PROG_NAME);
