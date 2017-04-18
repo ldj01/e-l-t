@@ -59,10 +59,10 @@ install-headers:
 
 #-----------------------------------------------------------------------------
 install-lib: all
-	install -d $(lib_link_path)
-	install -d $(level2_qa_lib_install_path)
-	install -m 644 $(ARCHIVE) $(level2_qa_lib_install_path)
-	ln -sf $(level2_qa_link_lib_path)/$(ARCHIVE) $(lib_link_path)/$(ARCHIVE)
+#	install -d $(lib_link_path)
+#	install -d $(level2_qa_lib_install_path)
+#	install -m 644 $(ARCHIVE) $(level2_qa_lib_install_path)
+#	ln -sf $(level2_qa_link_lib_path)/$(ARCHIVE) $(lib_link_path)/$(ARCHIVE)
 
 #-----------------------------------------------------------------------------
 #install: install-lib install-headers
