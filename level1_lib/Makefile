@@ -51,7 +51,7 @@ install-headers:
 	install -d $(level2_qa_inc_install_path)
 	@for inc in $(INC); do \
         echo "install -m 644 $$inc $(level2_qa_inc_install_path)/$$inc"; \
-        install -m 644 $$inc $(level2_qa_inc_install_path)/$$inc; \
+        install -m 644 $$inc $(level2_qa_inc_install_path)/$$inc || exit 1; \
         echo "ln -sf $(level2_qa_link_inc_path)/$$inc $(inc_link_path)/$$inc"; \
         ln -sf $(level2_qa_link_inc_path)/$$inc $(inc_link_path)/$$inc; \
         done
