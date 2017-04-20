@@ -3,7 +3,7 @@ FILE: read_level2_qa.c
   
 PURPOSE: Contains functions for opening, reading, and manipulating the Level-2
 QA bands (LEDAPS and LaSRC) for Collection products. QA bands for pre-collection
-scenes is not fully supported.
+scenes are not fully supported.
 
 PROJECT:  Land Satellites Data System Science Research and Development (LSRD)
 at the USGS EROS
@@ -33,9 +33,10 @@ NULL            Error parsing the XML file or opening the Level-2 QA band
 not NULL        Successfully read
 
 NOTES:
-1. It is expected that this QA band will be an unsigned 8-bit integer. If the
-   data type does not match that expectation, then an error will be flagged
-   when obtaining information about the QA band from the XML file.
+1. It is expected that this QA band will be an unsigned 8-bit integer or
+   unsigned 16-bit integer (LASRC RADSAT). If the data type does not match
+   that expectation, then an error will be flagged when obtaining information
+   about the QA band from the XML file.
 2. A file pointer to the Level-2 QA band will be returned. It is expected the
    calling routine will handle closing this file pointer when complete.
 ******************************************************************************/
@@ -43,7 +44,8 @@ FILE *open_level2_qa
 (
     char *espa_xml_file,   /* I: input ESPA XML filename */
     Espa_level2_qa_type qa_category, /* I: type of Level-2 QA data to be opened
-                                (LEDAPS radsat, LEDAPS cloud, LaSRC aerosol) */
+                                (LEDAPS radsat, LEDAPS cloud, LaSRC aerosol,
+                                 LaSRC radsat) */
     char *l2_qa_file,      /* O: output Level-2 QA filename (memory must be
                                  allocated ahead of time) */
     int *nlines,           /* O: number of lines in the QA band */
@@ -92,16 +94,28 @@ FILE *open_level2_qa
                 !strcmp (bmeta[i].category, "qa"))) ||
             (qa_category == LASRC_AEROSOL &&
                (!strcmp (bmeta[i].name, "sr_aerosol") &&
+                !strcmp (bmeta[i].category, "qa"))) ||
+            (qa_category == LASRC_RADSAT &&
+               (!strcmp (bmeta[i].name, "radsat_qa") &&
                 !strcmp (bmeta[i].category, "qa"))))
         {
             strcpy (l2_qa_file, bmeta[i].file_name);
             *nlines = bmeta[i].nlines;
             *nsamps = bmeta[i].nsamps;
-            if (bmeta[i].data_type != ESPA_UINT8)
+            if (qa_category != LASRC_RADSAT && bmeta[i].data_type != ESPA_UINT8)
             {
                 sprintf (errmsg, "Expecting UINT8 data type for Level-2 QA "
                     "band (%s), however the data type was something other than "
                     "UINT8.  Please check the input XML file.", bmeta[i].name);
+                error_handler (true, FUNC_NAME, errmsg);
+                return (NULL);
+            }
+            else if (qa_category == LASRC_RADSAT &&
+                     bmeta[i].data_type != ESPA_UINT16)
+            {
+                sprintf (errmsg, "Expecting UINT16 data type for Level-2 QA "
+                    "band (%s), however the data type was something other than "
+                    "UINT16.  Please check the input XML file.", bmeta[i].name);
                 error_handler (true, FUNC_NAME, errmsg);
                 return (NULL);
             }
@@ -128,6 +142,11 @@ FILE *open_level2_qa
             case LASRC_AEROSOL:
                 sprintf (errmsg, "Unable to find the specified Level-2 QA band "
                     "for LASRC AEROSOL: sr_aerosol");
+                break;
+
+            case LASRC_RADSAT:
+                sprintf (errmsg, "Unable to find the specified Level-2 QA band "
+                    "for LASRC RADSAT: radsat_qa");
                 break;
         }
         error_handler (true, FUNC_NAME, errmsg);
@@ -172,18 +191,42 @@ int read_level2_qa
                                  reading */
     int nlines,            /* I: number of lines to read from the QA file */
     int nsamps,            /* I: number of samples to read from the QA file */
-    uint8_t *level2_qa     /* O: Level-2 QA band values for the specified
+    Espa_level2_qa_type qa_category, /* I: type of Level-2 QA data to be opened
+                                (LEDAPS radsat, LEDAPS cloud, LaSRC aerosol,
+                                 LaSRC radsat) */
+    void *level2_qa        /* O: Level-2 QA band values for the specified
                                  number of lines (memory should be allocated
-                                 for nlines x nsamps of size uint8 before
+                                 for nlines x nsamps of size uint8/uint16 before
                                  calling this routine) */
 )
 {
     char FUNC_NAME[] = "read_level2_qa";  /* function name */
     char errmsg[STR_SIZE];    /* error message */
+    int nbits;                /* number of bits per pixel for this QA type */
+
+    /* How many bits per pixel for this Level-2 QA type */
+    switch (qa_category)
+    {
+        /* 8-bit products */
+        case LEDAPS_RADSAT:
+        case LEDAPS_CLOUD:
+        case LASRC_AEROSOL:
+            nbits = 1;
+            break;
+
+        /* 16-bit products */
+        case LASRC_RADSAT:
+            nbits = 2;
+            break;
+
+        default:
+            sprintf (errmsg, "Unknown Level-2 QA category.");
+            error_handler (true, FUNC_NAME, errmsg);
+            return (ERROR);
+    }
 
     /* Read the current line(s) from the band quality band */
-    if (read_raw_binary (fp_l2qa, nlines, nsamps, sizeof (uint8_t), level2_qa)
-        != SUCCESS)
+    if (read_raw_binary (fp_l2qa, nlines, nsamps, nbits, level2_qa) != SUCCESS)
     {   
         sprintf (errmsg, "Reading %d lines from Level-2 QA band", nlines);
         error_handler (true, FUNC_NAME, errmsg);

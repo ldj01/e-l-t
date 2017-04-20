@@ -55,10 +55,24 @@ NOTES:
 #define LASRC_WATER_BIT 3                  /* one bit */
 #define LASRC_AEROSOL_LEVEL_BIT 6          /* two bits */
 
-/* Data types */
+/* LaSRD QA bits - radsat */
+#define LASRC_FILL_BIT 0                  /* one bit */
+#define LASRC_B1_SAT_BIT 1                /* one bit */
+#define LASRC_B2_SAT_BIT 2                /* one bit */
+#define LASRC_B3_SAT_BIT 3                /* one bit */
+#define LASRC_B4_SAT_BIT 4                /* one bit */
+#define LASRC_B5_SAT_BIT 5                /* one bit */
+#define LASRC_B6_SAT_BIT 6                /* one bit */
+#define LASRC_B7_SAT_BIT 7                /* one bit */
+#define LASRC_B8_SAT_BIT 8                /* one bit */
+#define LASRC_B9_SAT_BIT 9                /* one bit */
+#define LASRC_B10_SAT_BIT 10              /* one bit */
+#define LASRC_B11_SAT_BIT 11              /* one bit */
+
+/* Level-2 product types */
 typedef enum
 {
-    LEDAPS_RADSAT, LEDAPS_CLOUD, LASRC_AEROSOL
+    LEDAPS_RADSAT, LEDAPS_CLOUD, LASRC_AEROSOL, LASRC_RADSAT
 } Espa_level2_qa_type;
 
 /* Function Prototypes */
@@ -79,9 +93,12 @@ int read_level2_qa
                                  reading */
     int nlines,            /* I: number of lines to read from the QA file */
     int nsamps,            /* I: number of samples to read from the QA file */
-    uint8_t *level2_qa     /* O: Level-2 QA band values for the specified
+    Espa_level2_qa_type qa_category, /* I: type of Level-2 QA data to be opened
+                                (LEDAPS radsat, LEDAPS cloud, LaSRC aerosol,
+                                 LaSRC radsat) */
+    void *level2_qa        /* O: Level-2 QA band values for the specified
                                  number of lines (memory should be allocated
-                                 for nlines x nsamps of size uint8 before
+                                 for nlines x nsamps of size uint8/uint16 before
                                  calling this routine) */
 );
 
@@ -143,7 +160,7 @@ NOTES:
 static inline bool ledaps_qa_is_saturated
 (
     uint8_t l2_qa_pix,     /* I: Level-2 QA value for current pixel */
-    uint8_t bit             /* LEDAPS band saturation bit
+    uint8_t bit            /* I: LEDAPS band saturation bit
                                (use LEDAPS_B1_SAT_BIT, LEDAPS_B2_SAT_BIT, ...,
                                 LEDAPS_B7_SAT_BIT to specify the desired band
                                 to be interrogated for saturation) */
@@ -319,6 +336,68 @@ static inline bool ledaps_qa_is_land_water
 )
 {
     if (((l2_qa_pix >> LEDAPS_LAND_WATER_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+        return true;
+    else
+        return false;
+}
+
+
+/*** LASRC RADSAT ***/
+/******************************************************************************
+MODULE:  lasrc_radsat_qa_is_fill
+
+PURPOSE: Determines if the LASRC radsat QA pixel is fill
+
+RETURN VALUE:
+Type = boolean
+Value           Description
+-----           -----------
+true            Pixel is fill
+false           Pixel is not fill
+
+NOTES:
+1. This is an inline function so it should be fast as the function call overhead
+   is eliminated by dropping the code inline with the original application.
+******************************************************************************/
+static inline bool lasrc_radsat_qa_is_fill
+(
+    uint16_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
+)
+{
+    if (((l2_qa_pix >> LASRC_FILL_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+        return true;
+    else
+        return false;
+}
+
+
+/******************************************************************************
+MODULE:  lasrc_radsat_qa_is_saturated
+
+PURPOSE: Determines if the LASRC radsat QA pixel is saturated for the desired
+band
+
+RETURN VALUE:
+Type = boolean
+Value           Description
+-----           -----------
+true            Pixel is saturated for desired band
+false           Pixel is not saturated for desired band
+
+NOTES:
+1. This is an inline function so it should be fast as the function call overhead
+   is eliminated by dropping the code inline with the original application.
+******************************************************************************/
+static inline bool lasrc_radsat_qa_is_saturated
+(
+    uint16_t l2_qa_pix,    /* I: Level-2 QA value for current pixel */
+    uint8_t bit            /* I: LASRC band saturation bit
+                               (use LASRC_B1_SAT_BIT, LASRC_B2_SAT_BIT, ...,
+                                LASRC_B11_SAT_BIT to specify the desired band
+                                to be interrogated for saturation) */
+)
+{
+    if (((l2_qa_pix >> bit) & ESPA_L2_SINGLE_BIT) == 1)
         return true;
     else
         return false;

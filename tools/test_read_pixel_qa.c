@@ -159,14 +159,12 @@ int main (int argc, char** argv)
     FILE *fp_pqa = NULL;         /* file pointer for the pixel QA band */
 
     /* Read the command-line arguments */
-    printf ("DEBUG: get_args\n"); fflush(stdout);
     if (get_args (argc, argv, &xml_infile) != SUCCESS)
     {   /* get_args already printed the error message */
         exit (EXIT_FAILURE);
     }
 
     /* Open the Level-2 pixel QA band */
-    printf ("DEBUG: open_pixel_qa\n"); fflush(stdout);
     fp_pqa = open_pixel_qa (xml_infile, l2_qa_file, &nlines, &nsamps);
     if (fp_pqa == NULL)
     {  /* Error messages already written */
@@ -177,7 +175,6 @@ int main (int argc, char** argv)
     printf ("  Filesize: %d lines x %d samples\n", nlines, nsamps);
 
     /* Allocate memory for the entire Level-2 pixel QA band */
-    printf ("DEBUG: alloc for pixel_qa\n"); fflush(stdout);
     pixel_qa = calloc (nlines*nsamps, sizeof (uint16_t));
     if (pixel_qa == NULL)
     {
@@ -187,14 +184,12 @@ int main (int argc, char** argv)
     }
 
     /* Read the entire band of Level-2 pixel QA data */
-    printf ("DEBUG: read_pixel_qa\n"); fflush(stdout);
     if (read_pixel_qa (fp_pqa, nlines, nsamps, pixel_qa) != SUCCESS)
     {  /* Error messages already written */
         exit (EXIT_FAILURE);
     }
 
     /* Close the Level-2 pixel QA band */
-    printf ("DEBUG: close_pixel_qa\n"); fflush(stdout);
     close_pixel_qa (fp_pqa);
 
     /* Print out the desired pixel values for testing */

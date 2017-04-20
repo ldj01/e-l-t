@@ -160,14 +160,12 @@ int main (int argc, char** argv)
     FILE *fp_bqa = NULL;         /* file pointer for the band quality band */
 
     /* Read the command-line arguments */
-    printf ("DEBUG: get_args\n"); fflush(stdout);
     if (get_args (argc, argv, &xml_infile) != SUCCESS)
     {   /* get_args already printed the error message */
         exit (EXIT_FAILURE);
     }
 
     /* Open the Level-1 QA band */
-    printf ("DEBUG: open_level1_qa\n"); fflush(stdout);
     fp_bqa = open_level1_qa (xml_infile, l1_qa_file, &nlines, &nsamps, &qa_cat);
     if (fp_bqa == NULL)
     {  /* Error messages already written */
@@ -185,7 +183,6 @@ int main (int argc, char** argv)
         printf ("UNKNOWN\n");
 
     /* Allocate memory for the entire Level-1 QA band */
-    printf ("DEBUG: alloc for level1_qa\n"); fflush(stdout);
     level1_qa = calloc (nlines*nsamps, sizeof (uint16_t));
     if (level1_qa == NULL)
     {
@@ -195,14 +192,12 @@ int main (int argc, char** argv)
     }
 
     /* Read the entire band of Level-1 QA data */
-    printf ("DEBUG: read_level1_qa\n"); fflush(stdout);
     if (read_level1_qa (fp_bqa, nlines, nsamps, level1_qa) != SUCCESS)
     {  /* Error messages already written */
         exit (EXIT_FAILURE);
     }
 
     /* Close the Level-1 QA band */
-    printf ("DEBUG: close_level1_qa\n"); fflush(stdout);
     close_level1_qa (fp_bqa);
 
     /* Print out the desired pixel values for testing */
