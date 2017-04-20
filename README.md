@@ -59,3 +59,5 @@ be needed for your application or other espa product formatter libraries may nee
     occlusion for Landat 8 products. L4-7 pixel QA bits remain the same.
   * Added Level-2 interrogation functions for cirrus confidence and terrain
     occlusion.
+  * Added support for reading Level-2 radsat QA band for Landsat 8, which
+    differs from Landsats 4-7.
