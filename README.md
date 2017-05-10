@@ -1,5 +1,5 @@
-# ESPA-L2QA-TOOLS Version 1.4.0 Release Notes
-Release Date: May 2017
+# ESPA-L2QA-TOOLS Version 1.5.0 Release Notes
+Release Date: June 2017
 
 ESPA modules for reading and interrogating the Level-1 QA band information, and
 for supporting a Level-2 QA band.  The Level-2 QA band will include unique attributes from the Level-2 processing.
@@ -11,7 +11,7 @@ espa-l2qa-tools source code
 
     git clone https://github.com/USGS-EROS/espa-l2qa-tools.git
 
-See git tag [version_1.4.0]
+See git tag [version_1.5.0]
 
 ### Dependencies
   * XML2 libraries -- ftp://xmlsoft.org/libxml2/
@@ -55,9 +55,4 @@ be needed for your application or other espa product formatter libraries may nee
 
 
 ## Release Notes
-  * Added bits for designating the cirrus confidence as well as the terrain
-    occlusion for Landat 8 products. L4-7 pixel QA bits remain the same.
-  * Added Level-2 interrogation functions for cirrus confidence and terrain
-    occlusion.
-  * Added support for reading Level-2 radsat QA band for Landsat 8, which
-    differs from Landsats 4-7.
+  * Added Python class to interrogate the Level-2 pixel QA band.
