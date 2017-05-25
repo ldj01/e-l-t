@@ -296,7 +296,7 @@ int generate_pixel_qa
     l2qa_bmeta->fill_value = (1 << L2QA_FILL);
     l2qa_bmeta->nlines = nlines;
     l2qa_bmeta->nsamps = nsamps;
-    strncpy (tmpstr, bmeta->short_name, 3);
+    strncpy (tmpstr, bmeta->short_name, 4);
     sprintf (l2qa_bmeta->short_name, "%sPQA", tmpstr);
     strcpy (l2qa_bmeta->long_name, "level-2 pixel quality band");
     l2qa_bmeta->pixel_size[0] = bmeta->pixel_size[0];

@@ -56,3 +56,4 @@ be needed for your application or other espa product formatter libraries may nee
 
 ## Release Notes
   * Added Python class to interrogate the Level-2 pixel QA band.
+  * Modified the XML short_name to contain a 4-digit instrument identifier.
