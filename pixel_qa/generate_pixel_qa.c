@@ -188,7 +188,8 @@ int generate_pixel_qa
                 l2_qa[i] |= (1 << L2QA_CLOUD_CONF2);
             }
 
-            /* Cirrus confidence and terrain occlusion only apply for L8 */
+            /* Cirrus confidence and terrain occlusion only apply for L8, and
+               neither will affect the clear bit. */
             if (qa_category == LEVEL1_L8)
             {
                 if (level1_qa_cirrus_confidence (l1_qa[i]) == L2QA_LOW_CONF)
@@ -200,16 +201,12 @@ int generate_pixel_qa
 
                 if (level1_qa_cirrus_confidence (l1_qa[i]) == L2QA_HIGH_CONF)
                 {
-                    l2_qa[i] &= ~(1 << L2QA_CLEAR);
                     l2_qa[i] |= (1 << L2QA_CIRRUS_CONF1);
                     l2_qa[i] |= (1 << L2QA_CIRRUS_CONF2);
                 }
 
                 if (level1_qa_is_terrain_occluded (l1_qa[i]))
-                {
-                    l2_qa[i] &= ~(1 << L2QA_CLEAR);
                     l2_qa[i] |= (1 << L2QA_TERRAIN_OCCL);
-                }
             }
         }
     }
