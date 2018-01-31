@@ -1,5 +1,5 @@
-# ESPA-L2QA-TOOLS Version 1.6.0 Release Notes
-Release Date: September 2017
+# ESPA-L2QA-TOOLS Version 1.7.0 Release Notes
+Release Date: March 2018
 
 ESPA modules for reading and interrogating the Level-1 QA band information, and
 for supporting a Level-2 QA band.  The Level-2 QA band will include unique attributes from the Level-2 processing.
@@ -15,7 +15,7 @@ espa-l2qa-tools source code
 
     git clone https://github.com/USGS-EROS/espa-l2qa-tools.git
 
-See git tag [version_1.6.0]
+See git tag [version_1.7.0]
 
 ### Dependencies
   * XML2 libraries -- ftp://xmlsoft.org/libxml2/
@@ -59,7 +59,5 @@ be needed for your application or other espa product formatter libraries may nee
 
 
 ## Release Notes
-  * Modified the Level-2 pixel QA generator so that the clear bit remains ON
-    if the cirrus confidence is high or the terrain occlusion is set. These
-    changes will have an affect only on the L8 products, since the cirrus and
-    terrain occlusion bits in the Level-1 QA band only apply for L8.
+  * Removed support for pre-Collection scenes, which mainly involves changing
+    the example filenames in the usage statements.

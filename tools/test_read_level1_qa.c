@@ -40,7 +40,8 @@ void usage ()
     printf ("\nwhere the following parameters are required:\n");
     printf ("    -xml: name of the input XML metadata file which follows "
             "the ESPA internal raw binary schema\n");
-    printf ("\nExample: test_read_level1_qa --xml=LE70230282011250EDC00.xml\n");
+    printf ("\nExample: test_read_level1_qa "
+            "--xml=LE07_L1TP_022033_20140228_20160905_01_T1.xml\n");
 }
 
 
