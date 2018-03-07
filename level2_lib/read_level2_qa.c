@@ -2,8 +2,7 @@
 FILE: read_level2_qa.c
   
 PURPOSE: Contains functions for opening, reading, and manipulating the Level-2
-QA bands (LEDAPS and LaSRC) for Collection products. QA bands for pre-collection
-scenes are not fully supported.
+QA bands (LEDAPS and LaSRC) for Collection products.
 
 PROJECT:  Land Satellites Data System Science Research and Development (LSRD)
 at the USGS EROS

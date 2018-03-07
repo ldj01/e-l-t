@@ -45,8 +45,8 @@ void usage()
            " confidence 2, 8=cirrus confidence 1, 9=cirrus confidence 2),"
            " 10=terrain occlusion\n");
     printf("    -distance: search distance from current pixel\n");
-    printf("\nExample: %s --xml=LE70230282011250EDC00.xml --bit=5"
-           " --distance=3\n", PROG_NAME);
+    printf("\nExample: %s --xml=LE07_L1TP_022033_20140228_20160905_01_T1.xml "
+           "--bit=5 --distance=3\n", PROG_NAME);
 }
 
 
