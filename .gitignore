@@ -1,17 +1,1 @@
-# Compiled source #
-###################
-*.o
-*.a
-
-# Specific directories #
-########################
-include
-
-# Specific exes #
-#################
-tools/generate_pixel_qa
-tools/test_read_level1_qa
-tools/test_read_level2_qa
-tools/test_read_pixel_qa
-tools/dilate_pixel_qa
-
+build

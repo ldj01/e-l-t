@@ -1,5 +1,4 @@
-# ESPA-L2QA-TOOLS Version 1.7.0 Release Notes
-Release Date: March 2018
+# ESPA-L2QA-TOOLS Release Notes
 
 ESPA modules for reading and interrogating the Level-1 QA band information, and
 for supporting a Level-2 QA band.  The Level-2 QA band will include unique attributes from the Level-2 processing.
@@ -14,8 +13,6 @@ This software is preliminary or provisional and is subject to revision. It is be
 espa-l2qa-tools source code
 
     git clone https://github.com/USGS-EROS/espa-l2qa-tools.git
-
-See git tag [version_1.7.0]
 
 ### Dependencies
   * XML2 libraries -- ftp://xmlsoft.org/libxml2/
@@ -59,5 +56,4 @@ be needed for your application or other espa product formatter libraries may nee
 
 
 ## Release Notes
-  * Removed support for pre-Collection scenes, which mainly involves changing
-    the example filenames in the usage statements.
+  * Converted build system from Makefiles to CMake.
