@@ -43,6 +43,9 @@ endif ()
 
 configure_file(common/l2qa_common.h.in l2qa_common.h)
 
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/l2qa_common.h
+        DESTINATION ${ESPA_INCLUDES})
+
 add_subdirectory(level1_lib)
 add_subdirectory(level2_lib)
 add_subdirectory(pixel_qa)

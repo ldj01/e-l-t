@@ -4,3 +4,8 @@ include_directories(${ESPA_INCLUDES})
 file(GLOB SOURCES "*.c")
 
 add_library(espa_level2_qa STATIC ${SOURCES})
+set_target_properties(espa_level2_qa PROPERTIES PUBLIC_HEADER read_level2_qa.h)
+
+install(TARGETS espa_level2_qa
+        ARCHIVE DESTINATION ${ESPA_LIBS}
+        PUBLIC_HEADER DESTINATION ${ESPA_INCLUDES})
