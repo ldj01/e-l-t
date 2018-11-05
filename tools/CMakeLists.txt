@@ -15,7 +15,7 @@ target_link_libraries(generate_pixel_qa
 add_executable(dilate_pixel_qa dilate_pixel_qa.c)
 target_link_libraries(dilate_pixel_qa
                       espa_pixel_qa espa_raw_binary espa_common
-                      ${XML_LIBS} ${OPENMP_LIBS})
+                      ${XML_LIBS} ${OPENMP_LIBS} -lm)
 
 add_executable(test_read_level1_qa test_read_level1_qa.c)
 target_link_libraries(test_read_level1_qa
