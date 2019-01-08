@@ -1,6 +1,6 @@
 /*****************************************************************************
 FILE: read_level2_qa.h
-  
+
 PURPOSE: Contains function prototypes for the LEDAPS and LaSRC Level-2 QA band
 manipulation for collection products.
 
@@ -25,54 +25,31 @@ NOTES:
 #include "raw_binary_io.h"
 
 /* Defines */
-/* Define the constants used for shifting bits and ANDing with the bits to
-   get to the desire quality bits */
-#define ESPA_L2_SINGLE_BIT 0x01            /* 00000001 */
-#define ESPA_L2_DOUBLE_BIT 0x03            /* 00000011 */
 
 /* LEDAPS QA bits - cloud */
-#define LEDAPS_DDV_BIT 0                   /* one bit */
-#define LEDAPS_CLOUD_BIT 1                 /* one bit */
-#define LEDAPS_CLOUD_SHADOW_BIT 2          /* one bit */
-#define LEDAPS_ADJ_CLOUD_BIT 3             /* one bit */
-#define LEDAPS_SNOW_BIT 4                  /* one bit */
-#define LEDAPS_LAND_WATER_BIT 5            /* one bit (1=land, 0=water) */
+#define LEDAPS_DDV_BIT              0x01   /* Bit 0 */
+#define LEDAPS_CLOUD_BIT            0x02   /* Bit 1 */
+#define LEDAPS_CLOUD_SHADOW_BIT     0x04   /* Bit 2 */
+#define LEDAPS_ADJ_CLOUD_BIT        0x08   /* Bit 3 */
+#define LEDAPS_SNOW_BIT             0x10   /* Bit 4 */
+#define LEDAPS_LAND_WATER_BIT       0x20   /* Bit 5 (1=land, 0=water) */
 
-/* LEDAPS QA bits - radsat */
-#define LEDAPS_FILL_BIT 0                  /* one bit */
-#define LEDAPS_B1_SAT_BIT 1                /* one bit */
-#define LEDAPS_B2_SAT_BIT 2                /* one bit */
-#define LEDAPS_B3_SAT_BIT 3                /* one bit */
-#define LEDAPS_B4_SAT_BIT 4                /* one bit */
-#define LEDAPS_B5_SAT_BIT 5                /* one bit */
-#define LEDAPS_B6_SAT_BIT 6                /* one bit */
-#define LEDAPS_B7_SAT_BIT 7                /* one bit */
+/* LaSRC QA bits - aerosol */
+#define LASRC_FILL_BIT              0x01   /* Bit 0 */
+#define LASRC_VALID_AEROSOL_RET_BIT 0x02   /* Bit 1 */
+#define LASRC_WATER_BIT             0x04   /* Bit 2 */
+#define LASRC_CLOUD_CIRRUS_BIT      0x08   /* Bit 3 */
+#define LASRC_CLOUD_SHADOW_BIT      0x10   /* Bit 4 */
+#define LASRC_AEROSOL_INTERP_BIT    0x20   /* Bit 5 */
+#define LASRC_AEROSOL_LEVEL_BIT     0xC0   /* Bits 6-7 */
+#define LASRC_AEROSOL_LEVEL_BIT_NUMBER  6  /* Bit number of the first aerosol 
+                                              level bit */
 
-/* LaSRC QA bits - aerosol (bits 4 and 5 are internal use only) */
-#define LASRC_FILL_BIT 0                   /* one bit */
-#define LASRC_VALID_AEROSOL_RET_BIT 1      /* one bit */
-#define LASRC_AEROSOL_INTERP_BIT 2         /* one bit */
-#define LASRC_WATER_BIT 3                  /* one bit */
-#define LASRC_AEROSOL_LEVEL_BIT 6          /* two bits */
-
-/* LaSRD QA bits - radsat */
-#define LASRC_FILL_BIT 0                  /* one bit */
-#define LASRC_B1_SAT_BIT 1                /* one bit */
-#define LASRC_B2_SAT_BIT 2                /* one bit */
-#define LASRC_B3_SAT_BIT 3                /* one bit */
-#define LASRC_B4_SAT_BIT 4                /* one bit */
-#define LASRC_B5_SAT_BIT 5                /* one bit */
-#define LASRC_B6_SAT_BIT 6                /* one bit */
-#define LASRC_B7_SAT_BIT 7                /* one bit */
-#define LASRC_B8_SAT_BIT 8                /* one bit */
-#define LASRC_B9_SAT_BIT 9                /* one bit */
-#define LASRC_B10_SAT_BIT 10              /* one bit */
-#define LASRC_B11_SAT_BIT 11              /* one bit */
-
-/* Level-2 product types */
+/* Level-2 QA types */
 typedef enum
 {
-    LEDAPS_RADSAT, LEDAPS_CLOUD, LASRC_AEROSOL, LASRC_RADSAT
+    LEDAPS_CLOUD,
+    LASRC_AEROSOL
 } Espa_level2_qa_type;
 
 /* Function Prototypes */
@@ -80,7 +57,7 @@ FILE *open_level2_qa
 (
     char *espa_xml_file,   /* I: input ESPA XML filename */
     Espa_level2_qa_type qa_category, /* I: type of Level-2 QA data to be opened
-                                (LEDAPS radsat, LEDAPS cloud, LaSRC aerosol) */
+                                (LEDAPS cloud, LaSRC aerosol) */
     char *l2_qa_file,      /* O: output Level-2 QA filename (memory must be
                                  allocated ahead of time) */
     int *nlines,           /* O: number of lines in the QA band */
@@ -93,12 +70,9 @@ int read_level2_qa
                                  reading */
     int nlines,            /* I: number of lines to read from the QA file */
     int nsamps,            /* I: number of samples to read from the QA file */
-    Espa_level2_qa_type qa_category, /* I: type of Level-2 QA data to be opened
-                                (LEDAPS radsat, LEDAPS cloud, LaSRC aerosol,
-                                 LaSRC radsat) */
     void *level2_qa        /* O: Level-2 QA band values for the specified
                                  number of lines (memory should be allocated
-                                 for nlines x nsamps of size uint8/uint16 before
+                                 for nlines x nsamps of size uint8 before
                                  calling this routine) */
 );
 
@@ -110,68 +84,6 @@ void close_level2_qa
 
 
 /* Inline Function Prototypes */
-
-/*** LEDAPS RADSAT ***/
-/******************************************************************************
-MODULE:  ledaps_qa_is_fill
-
-PURPOSE: Determines if the LEDAPS radsat QA pixel is fill
-
-RETURN VALUE:
-Type = boolean
-Value           Description
------           -----------
-true            Pixel is fill
-false           Pixel is not fill
-
-NOTES:
-1. This is an inline function so it should be fast as the function call overhead
-   is eliminated by dropping the code inline with the original application.
-******************************************************************************/
-static inline bool ledaps_qa_is_fill
-(
-    uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
-)
-{
-    if (((l2_qa_pix >> LEDAPS_FILL_BIT) & ESPA_L2_SINGLE_BIT) == 1)
-        return true;
-    else
-        return false;
-}
-
-
-/******************************************************************************
-MODULE:  ledaps_qa_is_saturated
-
-PURPOSE: Determines if the LEDAPS radsat QA pixel is saturated for the desired
-band
-
-RETURN VALUE:
-Type = boolean
-Value           Description
------           -----------
-true            Pixel is saturated for desired band
-false           Pixel is not saturated for desired band
-
-NOTES:
-1. This is an inline function so it should be fast as the function call overhead
-   is eliminated by dropping the code inline with the original application.
-******************************************************************************/
-static inline bool ledaps_qa_is_saturated
-(
-    uint8_t l2_qa_pix,     /* I: Level-2 QA value for current pixel */
-    uint8_t bit            /* I: LEDAPS band saturation bit
-                               (use LEDAPS_B1_SAT_BIT, LEDAPS_B2_SAT_BIT, ...,
-                                LEDAPS_B7_SAT_BIT to specify the desired band
-                                to be interrogated for saturation) */
-)
-{
-    if (((l2_qa_pix >> bit) & ESPA_L2_SINGLE_BIT) == 1)
-        return true;
-    else
-        return false;
-}
-
 
 /*** LEDAPS CLOUD QA ***/
 /******************************************************************************
@@ -195,7 +107,7 @@ static inline bool ledaps_qa_is_ddv
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LEDAPS_DDV_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LEDAPS_DDV_BIT)
         return true;
     else
         return false;
@@ -223,7 +135,7 @@ static inline bool ledaps_qa_is_cloud
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LEDAPS_CLOUD_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LEDAPS_CLOUD_BIT)
         return true;
     else
         return false;
@@ -251,7 +163,7 @@ static inline bool ledaps_qa_is_cloud_shadow
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LEDAPS_CLOUD_SHADOW_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LEDAPS_CLOUD_SHADOW_BIT)
         return true;
     else
         return false;
@@ -279,7 +191,7 @@ static inline bool ledaps_qa_is_adj_cloud
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LEDAPS_ADJ_CLOUD_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LEDAPS_ADJ_CLOUD_BIT)
         return true;
     else
         return false;
@@ -307,7 +219,7 @@ static inline bool ledaps_qa_is_snow
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LEDAPS_SNOW_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LEDAPS_SNOW_BIT)
         return true;
     else
         return false;
@@ -335,69 +247,7 @@ static inline bool ledaps_qa_is_land_water
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LEDAPS_LAND_WATER_BIT) & ESPA_L2_SINGLE_BIT) == 1)
-        return true;
-    else
-        return false;
-}
-
-
-/*** LASRC RADSAT ***/
-/******************************************************************************
-MODULE:  lasrc_radsat_qa_is_fill
-
-PURPOSE: Determines if the LASRC radsat QA pixel is fill
-
-RETURN VALUE:
-Type = boolean
-Value           Description
------           -----------
-true            Pixel is fill
-false           Pixel is not fill
-
-NOTES:
-1. This is an inline function so it should be fast as the function call overhead
-   is eliminated by dropping the code inline with the original application.
-******************************************************************************/
-static inline bool lasrc_radsat_qa_is_fill
-(
-    uint16_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
-)
-{
-    if (((l2_qa_pix >> LASRC_FILL_BIT) & ESPA_L2_SINGLE_BIT) == 1)
-        return true;
-    else
-        return false;
-}
-
-
-/******************************************************************************
-MODULE:  lasrc_radsat_qa_is_saturated
-
-PURPOSE: Determines if the LASRC radsat QA pixel is saturated for the desired
-band
-
-RETURN VALUE:
-Type = boolean
-Value           Description
------           -----------
-true            Pixel is saturated for desired band
-false           Pixel is not saturated for desired band
-
-NOTES:
-1. This is an inline function so it should be fast as the function call overhead
-   is eliminated by dropping the code inline with the original application.
-******************************************************************************/
-static inline bool lasrc_radsat_qa_is_saturated
-(
-    uint16_t l2_qa_pix,    /* I: Level-2 QA value for current pixel */
-    uint8_t bit            /* I: LASRC band saturation bit
-                               (use LASRC_B1_SAT_BIT, LASRC_B2_SAT_BIT, ...,
-                                LASRC_B11_SAT_BIT to specify the desired band
-                                to be interrogated for saturation) */
-)
-{
-    if (((l2_qa_pix >> bit) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LEDAPS_LAND_WATER_BIT)
         return true;
     else
         return false;
@@ -426,7 +276,7 @@ static inline bool lasrc_qa_is_fill
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LASRC_FILL_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LASRC_FILL_BIT)
         return true;
     else
         return false;
@@ -455,12 +305,92 @@ static inline bool lasrc_qa_is_valid_aerosol_retrieval
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LASRC_VALID_AEROSOL_RET_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LASRC_VALID_AEROSOL_RET_BIT)
         return true;
     else
         return false;
 }
 
+/******************************************************************************
+MODULE:  lasrc_qa_is_water
+
+PURPOSE: Determines if the LaSRC aerosol QA pixel is water
+
+RETURN VALUE:
+Type = boolean
+Value           Description
+-----           -----------
+true            Pixel is water
+false           Pixel is not water
+
+NOTES:
+1. This is an inline function so it should be fast as the function call overhead
+   is eliminated by dropping the code inline with the original application.
+******************************************************************************/
+static inline bool lasrc_qa_is_water
+(
+    uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
+)
+{
+    if (l2_qa_pix & LASRC_WATER_BIT)
+        return true;
+    else
+        return false;
+}
+
+/******************************************************************************
+MODULE:  lasrc_qa_is_cloud_cirrus
+
+PURPOSE: Determines if the LaSRC aerosol QA pixel is cloud or cirrus
+
+RETURN VALUE:
+Type = boolean
+Value           Description
+-----           -----------
+true            Pixel is cloud or cirrus
+false           Pixel is not cloud or cirrus
+
+NOTES:
+1. This is an inline function so it should be fast as the function call overhead
+   is eliminated by dropping the code inline with the original application.
+******************************************************************************/
+static inline bool lasrc_qa_is_cloud_cirrus
+(
+    uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
+)
+{
+    if (l2_qa_pix & LASRC_CLOUD_CIRRUS_BIT)
+        return true;
+    else
+        return false;
+}
+
+/******************************************************************************
+MODULE:  lasrc_qa_is_cloud_shadow
+
+PURPOSE: Determines if the LaSRC aerosol QA pixel is cloud shadow
+
+RETURN VALUE:
+Type = boolean
+Value           Description
+-----           -----------
+true            Pixel is cloud shadow
+false           Pixel is not cloud shadow
+
+NOTES:
+1. This is an inline function so it should be fast as the function call overhead
+   is eliminated by dropping the code inline with the original application.
+******************************************************************************/
+static inline bool lasrc_qa_is_cloud_shadow
+(
+    uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
+)
+{
+    if (l2_qa_pix & LASRC_CLOUD_SHADOW_BIT)
+        return true;
+    else
+        return false;
+}
 
 /******************************************************************************
 MODULE:  lasrc_qa_is_aerosol_interp
@@ -484,36 +414,7 @@ static inline bool lasrc_qa_is_aerosol_interp
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    if (((l2_qa_pix >> LASRC_AEROSOL_INTERP_BIT) & ESPA_L2_SINGLE_BIT) == 1)
-        return true;
-    else
-        return false;
-}
-
-
-/******************************************************************************
-MODULE:  lasrc_qa_is_water
-
-PURPOSE: Determines if the LaSRC aerosol QA pixel is flagged as water, which
-changes the way the aerosols are retrieved
-
-RETURN VALUE:
-Type = boolean
-Value           Description
------           -----------
-true            Pixel is water
-false           Pixel is not water
-
-NOTES:
-1. This is an inline function so it should be fast as the function call overhead
-   is eliminated by dropping the code inline with the original application.
-******************************************************************************/
-static inline bool lasrc_qa_is_water
-(
-    uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
-)
-{
-    if (((l2_qa_pix >> LASRC_WATER_BIT) & ESPA_L2_SINGLE_BIT) == 1)
+    if (l2_qa_pix & LASRC_AEROSOL_INTERP_BIT)
         return true;
     else
         return false;
@@ -544,7 +445,8 @@ static inline uint8_t lasrc_qa_aerosol_level
     uint8_t l2_qa_pix      /* I: Level-2 QA value for current pixel */
 )
 {
-    return ((l2_qa_pix >> LASRC_AEROSOL_LEVEL_BIT) & ESPA_L2_DOUBLE_BIT);
+    return ((l2_qa_pix & LASRC_AEROSOL_LEVEL_BIT) 
+        >> LASRC_AEROSOL_LEVEL_BIT_NUMBER);
 }
 
 #endif

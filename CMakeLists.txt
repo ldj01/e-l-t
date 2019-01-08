@@ -6,6 +6,7 @@ project(espa-l2qa-tools)
 include(package_version.cmake)
 
 include(FindPkgConfig)
+include (CTest)
 
 if (NOT XML_INCLUDES)
     find_package(LibXml2)
@@ -35,6 +36,13 @@ endif ()
 set (ESPA_INCLUDES ${ESPA_INCLUDES} CACHE PATH "ESPA header file path" FORCE)
 set (ESPA_LIBS ${ESPA_LIBS} CACHE PATH "ESPA library path" FORCE)
 
+# Set the path for the IAS headers
+if (NOT IAS_INCLUDES)
+    set (IAS_INCLUDES $ENV{IAS_INC})
+endif ()
+set (IAS_INCLUDES ${IAS_INCLUDES} CACHE PATH "IAS library header file path"
+     FORCE)
+
 # Control application threading.
 if (DEFINED ENV{ENABLE_THREADING})
     add_definitions(-fopenmp)
@@ -48,5 +56,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/l2qa_common.h
 
 add_subdirectory(level1_lib)
 add_subdirectory(level2_lib)
-add_subdirectory(pixel_qa)
-add_subdirectory(tools)

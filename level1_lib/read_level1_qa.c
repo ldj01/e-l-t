@@ -1,6 +1,6 @@
 /*****************************************************************************
 FILE: read_level1_qa.c
-  
+
 PURPOSE: Contains functions for opening, reading, and manipulating the Level-1
 QA band.
 
@@ -45,11 +45,12 @@ FILE *open_level1_qa
                                  allocated ahead of time) */
     int *nlines,           /* O: number of lines in the QA band */
     int *nsamps,           /* O: number of samples in the QA band */
-    Espa_level1_qa_type *qa_category /* O: type of Level-1 QA data (L4-7, L8) */
+    Espa_level1_qa_type *qa_category /* I/O: type of Level-1 QA data */
 )
 {
     char FUNC_NAME[] = "open_level1_qa";  /* function name */
     char errmsg[STR_SIZE];    /* error message */
+    char name[STR_SIZE];      /* band name of the requested QA */
     int i;                    /* looping variable */
     bool found;               /* was the Level-1 QA band found? */
     Espa_internal_meta_t xml_metadata;  /* XML metadata structure to be
@@ -57,6 +58,22 @@ FILE *open_level1_qa
     Espa_global_meta_t *gmeta;/* pointer to the global metadata structure */
     Espa_band_meta_t *bmeta;  /* pointer to the array of bands metadata */
     FILE *fp_bqa = NULL;      /* file pointer for the band quality band */
+
+    /* Set up the band name to locate */
+    if (*qa_category == LEVEL1_BQA_PIXEL ||
+        *qa_category == LEVEL1_BQA_PIXEL_L457 ||
+        *qa_category == LEVEL1_BQA_PIXEL_L89)
+        strcpy(name, "bqa_pixel");
+    else if (*qa_category == LEVEL1_BQA_RADSAT ||
+        *qa_category == LEVEL1_BQA_RADSAT_L457 ||
+        *qa_category == LEVEL1_BQA_RADSAT_L89)
+        strcpy(name, "bqa_radsat");
+    else
+    {
+        sprintf (errmsg, "Unknown QA category specified: %d", *qa_category);
+        error_handler (true, FUNC_NAME, errmsg);
+        return (NULL);
+    }
 
     /* Validate the input metadata file */
     if (validate_xml_file (espa_xml_file) != SUCCESS)
@@ -82,7 +99,7 @@ FILE *open_level1_qa
     for (i = 0; i < xml_metadata.nbands; i++)
     {
         /* Is this the Level-1 quality band */
-        if (!strcmp (bmeta[i].name, "bqa") && !strcmp (bmeta[i].category, "qa"))
+        if (!strcmp (bmeta[i].name, name) && !strcmp (bmeta[i].category, "qa"))
         {
             strcpy (l1_qa_file, bmeta[i].file_name);
             *nlines = bmeta[i].nlines;
@@ -117,11 +134,23 @@ FILE *open_level1_qa
         return (NULL);
     }
 
-    /* Determine the instrument type for actual QA bit identification */
-    if (!strcmp (gmeta->instrument, "TM") || !strcmp (gmeta->instrument, "ETM"))
-        *qa_category = LEVEL1_L457;
-    else
-        *qa_category = LEVEL1_L8;
+    /* Determine the specific instrument-based QA type */
+    if (*qa_category == LEVEL1_BQA_PIXEL)
+    {
+        if (!strcmp (gmeta->instrument, "TM") ||
+            !strcmp (gmeta->instrument, "ETM"))
+            *qa_category = LEVEL1_BQA_PIXEL_L457;
+        else
+            *qa_category = LEVEL1_BQA_PIXEL_L89;
+    }
+    else if (*qa_category == LEVEL1_BQA_RADSAT)
+    {
+        if (!strcmp (gmeta->instrument, "TM") ||
+            !strcmp (gmeta->instrument, "ETM"))
+            *qa_category = LEVEL1_BQA_RADSAT_L457;
+        else
+            *qa_category = LEVEL1_BQA_RADSAT_L89;
+    }
 
     /* Free the metadata structure */
     free_metadata (&xml_metadata);
@@ -164,7 +193,7 @@ int read_level1_qa
     /* Read the current line from the band quality band */
     if (read_raw_binary (fp_bqa, nlines, nsamps, sizeof (uint16_t), level1_qa)
         != SUCCESS)
-    {   
+    {
         sprintf (errmsg, "Reading %d lines from Level-1 QA band", nlines);
         error_handler (true, FUNC_NAME, errmsg);
         return (ERROR);
