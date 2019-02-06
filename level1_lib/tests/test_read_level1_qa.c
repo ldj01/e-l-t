@@ -348,6 +348,24 @@ int main (int argc, char** argv)
     else
         printf ("Not Cloud\n");
 
+    printf ("Water Value %X: ", IAS_QUALITY_BIT_WATER);
+    if (level1_qa_is_water (IAS_QUALITY_BIT_WATER))
+        printf ("Water\n");
+    else
+    {
+        printf ("Not Water\n");
+        exit_status = EXIT_FAILURE;
+    }
+
+    printf ("Not Water Value %X: ", IAS_QUALITY_BIT_WATER-1);
+    if (level1_qa_is_water (IAS_QUALITY_BIT_WATER-1))
+    {
+        printf ("Water\n");
+        exit_status = EXIT_FAILURE;
+    }
+    else
+        printf ("Not Water\n");
+
     printf ("Cloud confidence (0): %d\n", level1_qa_cloud_confidence (0));
     if (level1_qa_cloud_confidence (0) != L1QA_NO_CONF)
         exit_status = EXIT_FAILURE;

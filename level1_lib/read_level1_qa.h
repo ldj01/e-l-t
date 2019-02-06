@@ -171,7 +171,7 @@ NOTES:
 1. This is an inline function so it should be fast as the function call overhead
    is eliminated by dropping the code inline with the original application.
 ******************************************************************************/
-static inline uint8_t level1_qa_is_saturated
+static inline bool level1_qa_is_saturated
 (
     uint16_t l1_qa_pix,      /* I: Level-1 radsat QA value for current pixel */
     int      band            /* I: Band number */
@@ -230,6 +230,32 @@ static inline bool level1_qa_is_cloud
         return false;
 }
 
+/******************************************************************************
+MODULE:  level1_qa_is_water
+
+PURPOSE: Determines if the current Level-1 QA pixel is water
+
+RETURN VALUE:
+Type = boolean
+Value           Description
+-----           -----------
+true            Pixel is water
+false           Pixel is not water
+
+NOTES:
+1. This is an inline function so it should be fast as the function call overhead
+   is eliminated by dropping the code inline with the original application.
+******************************************************************************/
+static inline bool level1_qa_is_water
+(
+    uint16_t l1_qa_pix      /* I: Level-1 pixel QA value for current pixel */
+)
+{
+    if (l1_qa_pix & IAS_QUALITY_BIT_WATER)
+        return true;
+    else
+        return false;
+}
 
 /******************************************************************************
 MODULE:  level1_qa_bit_number
@@ -378,5 +404,4 @@ static inline uint8_t level1_qa_cirrus_confidence
     return ((l1_qa_pix & IAS_QUALITY_BIT_CIRRUS_11)
         >> level1_qa_bit_number(IAS_QUALITY_BIT_CIRRUS_11));
 }
-
 #endif
